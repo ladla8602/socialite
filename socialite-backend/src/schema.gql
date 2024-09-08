@@ -1,0 +1,77 @@
+directive @upper on FIELD_DEFINITION
+
+input CreateUserInput {
+  device_token: String
+  device_type: Int!
+  full_name: String!
+  identity: String!
+  latitude: Float
+  longitude: Float
+  password: String!
+  username: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input LoginInput {
+  device_token: String
+  device_type: String
+  identity: String!
+  password: String!
+}
+
+type LoginResponse {
+  access_token: String!
+  refresh_token: String!
+}
+
+type Mutation {
+  createUser(createUserInput: CreateUserInput!): UserEntity!
+  login(loginInput: LoginInput!): LoginResponse!
+  refreshToken(refreshToken: String!): LoginResponse!
+}
+
+type PostEntity {
+  comments_count: Int!
+  created_at: DateTime!
+  desc: String
+  id: Int!
+  likes_count: Int!
+  tags: String
+  updated_at: DateTime!
+  user: UserEntity!
+  user_id: Int!
+}
+
+type Query {
+  hello: String!
+  users: [UserEntity!]!
+}
+
+type UserEntity {
+  background_image: String
+  bio: String
+  block_user_ids: [String!]
+  created_at: DateTime!
+  device_token: String
+  device_type: Int!
+  followers: Int
+  following: Int
+  full_name: String
+  id: ID!
+  identity: String!
+  is_block: Boolean!
+  is_invited_to_room: Int!
+  is_push_notifications: Int!
+  is_verified: Int!
+  latitude: Float
+  login_type: Int
+  longitude: Float
+  posts: [PostEntity!]!
+  profile: String
+  updated_at: DateTime!
+  username: String!
+}
