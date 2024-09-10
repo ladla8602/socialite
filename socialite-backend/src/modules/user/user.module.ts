@@ -16,6 +16,6 @@ import { PubSub } from 'graphql-subscriptions';
     ],
     controllers: [UserController],
     providers: [UserService, UserResolver, UserRepository, PubSub],
-    exports: [UserService]
+    exports: [UserService, UserRepository]
 })
 export class UserModule { }

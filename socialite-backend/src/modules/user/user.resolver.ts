@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { UserEntity } from './entities/user.entity';
 import { UserService } from './user.service';
 import { CreateUserInput } from '../auth/dto/create-user.input';
@@ -15,7 +15,8 @@ export class UserResolver {
 
     @Query(() => [UserEntity])
     @UseGuards(JwtAuthGuard)
-    async users() {
+    async users(@Context() context: any) {
+        console.log(context.req.user)
         return await this.userService.findAll();
     }
 }

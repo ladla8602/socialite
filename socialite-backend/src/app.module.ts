@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
@@ -14,10 +14,7 @@ import { DirectiveLocation, GraphQLDirective } from 'graphql';
 import { LoggingPlugin } from './common/plugins/logging.plugin';
 import { PostModule } from './modules/post/post.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './modules/auth/jwt.guard';
-import * as redisStore from 'cache-manager-ioredis';
-import { CacheModule } from '@nestjs/cache-manager';
+import { UploadModule } from './modules/upload/upload.module';
 
 const levels = {
   http: 10,
@@ -62,6 +59,7 @@ const isProduction = process.env.NODE_ENV === 'production';
       debug: true,
       playground: true,
       sortSchema: true,
+      context: ({ req }) => ({ req }),
       transformSchema: schema => upperDirectiveTransformer(schema, 'upper'),
       installSubscriptionHandlers: true,
       plugins: [new LoggingPlugin()],
@@ -74,16 +72,17 @@ const isProduction = process.env.NODE_ENV === 'production';
         ],
       },
     }),
-    CacheModule.register({
-      store: redisStore,
-      host: 'localhost',  // Redis host
-      port: 6379,         // Redis port
-      ttl: 600,           // Cache TTL in seconds
-      isGlobal: true,     // Optional: Makes the cache module globally available
-    }),
+    // CacheModule.register({
+    //   store: redisStore,
+    //   host: 'localhost',  // Redis host
+    //   port: 6379,         // Redis port
+    //   ttl: 600,           // Cache TTL in seconds
+    //   isGlobal: true,     // Optional: Makes the cache module globally available
+    // }),
     UserModule,
     PostModule,
     AuthModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [

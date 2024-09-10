@@ -10,12 +10,11 @@ export class PostContentEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Field(() => Int)
-    @Column({ type: 'int' })
-    post_id: number;
+    @OneToOne(() => PostEntity, (post) => post.postContent)  // One-to-One relation with PostEntity
+    post: PostEntity;
 
     @Field(() => Int)
-    @Column({ type: 'tinyint', comment: 'image = 0, video = 1' })
+    @Column({ type: 'tinyint', comment: 'image = 1, video = 2' })
     content_type: number;
 
     @Field()
@@ -33,7 +32,4 @@ export class PostContentEntity {
     @Field()
     @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     updated_at: Date;
-
-    @OneToOne(() => PostEntity, (post) => post.content)  // One-to-One relation with PostEntity
-    post: PostEntity;
 }

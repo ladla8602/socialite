@@ -11,30 +11,24 @@ import { UserMessage } from './constants/user.message';
 @Injectable()
 export class UserService {
     constructor(
-        private userRepository: UserRepository,
+        private readonly userRepository: UserRepository,
     ) { }
 
     async findOneByIdentity(identity: string): Promise<UserEntity> {
         try {
             const user = await this.userRepository.findOneByIdentity(identity);
-            if (!user) {
-                throw new Error(UserMessage.USER_NOT_FOUND);
-            }
             return user;
         } catch (error: unknown) {
-            throw error;
+            throw null;
         }
     }
 
     async findOneById(id: string): Promise<UserEntity> {
         try {
             const user = await this.userRepository.findOne({ id });
-            if (!user) {
-                throw new Error(UserMessage.USER_NOT_FOUND);
-            }
             return user;
         } catch (error: unknown) {
-            throw error;
+            throw null;
         }
     }
 
@@ -59,6 +53,5 @@ export class UserService {
         } catch (error: unknown) {
             throw error;
         }
-
     }
 }

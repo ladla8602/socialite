@@ -1,7 +1,9 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
 import { UserEntity } from '../../user/entities/user.entity';
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToOne, JoinColumn, DeleteDateColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToOne, JoinColumn, DeleteDateColumn, OneToMany } from 'typeorm';
 import { PostContentEntity } from './post_content.entity';
+import { PostImageEntity } from './post_image.entity';
+import { PostVideoEntity } from './post_video.entity';
 
 @ObjectType()  // This decorator is used for GraphQL schema generation
 @Entity({ name: 'posts' })
@@ -10,9 +12,9 @@ export class PostEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Field(() => Int)  // Foreign key to the User entity
-    @Column({ type: 'int' })
-    user_id: number;
+    @Field(() => UserEntity)
+    @ManyToOne(() => UserEntity, (user) => user.posts)
+    user: UserEntity;
 
     @Field({ nullable: true })  // Field exposed in GraphQL
     @Column({ type: 'text', nullable: true })
@@ -42,12 +44,17 @@ export class PostEntity {
     @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     updated_at: Date;
 
-    @Field(() => UserEntity)
-    @ManyToOne(() => UserEntity, (user) => user.posts)
-    user: UserEntity;
-
     @Field(() => PostContentEntity, { nullable: true })
     @OneToOne(() => PostContentEntity, (postContent) => postContent.post, { cascade: true })  // One-to-One relation with PostContentEntity
     @JoinColumn()  // To specify that this entity owns the relationship
-    content: PostContentEntity;
+    postContent: PostContentEntity;
+
+    @Field(() => [PostImageEntity])
+    @OneToMany(() => PostImageEntity, (image) => image.post, { cascade: true })
+    postImages?: PostImageEntity[];
+
+    @Field(() => PostVideoEntity, { nullable: true })
+    @OneToOne(() => PostVideoEntity, (video) => video.post, { cascade: true })
+    @JoinColumn() // To specify that this entity owns the relationship
+    postVideo?: PostVideoEntity;
 }

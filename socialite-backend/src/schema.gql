@@ -1,5 +1,11 @@
 directive @upper on FIELD_DEFINITION
 
+input CreatePostInput {
+  content: String!
+  content_type: Float!
+  tags: String
+}
+
 input CreateUserInput {
   device_token: String
   device_type: Int!
@@ -29,21 +35,47 @@ type LoginResponse {
 }
 
 type Mutation {
+  createPost(createPostInput: CreatePostInput!): PostEntity!
   createUser(createUserInput: CreateUserInput!): UserEntity!
   login(loginInput: LoginInput!): LoginResponse!
   refreshToken(refreshToken: String!): LoginResponse!
 }
 
+type PostContentEntity {
+  content: String!
+  content_type: Int!
+  created_at: DateTime!
+  id: ID!
+  thumbnail: String
+  updated_at: DateTime!
+}
+
 type PostEntity {
   comments_count: Int!
   created_at: DateTime!
+  deleted_at: DateTime
   desc: String
-  id: Int!
+  id: ID!
   likes_count: Int!
+  postContent: PostContentEntity
+  postImages: [PostImageEntity!]!
+  postVideo: PostVideoEntity
   tags: String
   updated_at: DateTime!
   user: UserEntity!
-  user_id: Int!
+}
+
+type PostImageEntity {
+  id: ID!
+  image_url: String!
+  post_id: String!
+}
+
+type PostVideoEntity {
+  id: ID!
+  media_url: String!
+  mime_type: String!
+  post_id: String!
 }
 
 type Query {
@@ -56,6 +88,7 @@ type UserEntity {
   bio: String
   block_user_ids: [String!]
   created_at: DateTime!
+  deleted_at: DateTime
   device_token: String
   device_type: Int!
   followers: Int
@@ -63,6 +96,7 @@ type UserEntity {
   full_name: String
   id: ID!
   identity: String!
+  is_active: Boolean!
   is_block: Boolean!
   is_invited_to_room: Int!
   is_push_notifications: Int!

@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Req } from '@nestjs/common';
 import { UserRoutes } from './constants/user.routes';
 import { PinoLogger } from 'nestjs-pino';
 import { ApiResponse } from 'src/utils/types/response.type';
@@ -19,8 +19,9 @@ export class UserController {
     @Get()
     @HttpCode(HttpStatus.OK)
     @UseGuards(JwtAuthGuard)
-    async users(): Promise<ApiResponse<any>> {
+    async users(@Req() req: any): Promise<ApiResponse<any>> {
         try {
+            console.log(req.user.id)
             const users = await this.userService.findAll();
             return apiResponse(HttpStatus.OK, '', users);
         } catch (error) {
