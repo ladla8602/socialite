@@ -23,7 +23,7 @@ export class UserRepository {
     }
 
     async findOne(fields: EntityCondition<UserEntity>): Promise<UserEntity | null> {
-        const cacheKey = `user-${JSON.stringify(fields)}`;
+        const cacheKey = `user-${fields.id}`;
 
         this.logger.info(`Fetching user with conditions: ${JSON.stringify(fields)}`);
 
