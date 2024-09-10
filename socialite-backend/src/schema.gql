@@ -31,19 +31,38 @@ type LoginResponse {
 type Mutation {
   createUser(createUserInput: CreateUserInput!): UserEntity!
   login(loginInput: LoginInput!): LoginResponse!
+  postCreate(postInput: PostInput!): String!
   refreshToken(refreshToken: String!): LoginResponse!
+}
+
+type PostContentEntity {
+  content: String!
+  content_type: Int!
+  created_at: DateTime!
+  id: ID!
+  post_id: Int!
+  thumbnail: String
+  updated_at: DateTime!
 }
 
 type PostEntity {
   comments_count: Int!
+  content: PostContentEntity
   created_at: DateTime!
+  deleted_at: DateTime
   desc: String
-  id: Int!
+  id: ID!
   likes_count: Int!
   tags: String
   updated_at: DateTime!
   user: UserEntity!
   user_id: Int!
+}
+
+input PostInput {
+  content: String!
+  content_type: Float!
+  tags: String
 }
 
 type Query {
@@ -56,6 +75,7 @@ type UserEntity {
   bio: String
   block_user_ids: [String!]
   created_at: DateTime!
+  deleted_at: DateTime
   device_token: String
   device_type: Int!
   followers: Int
@@ -63,6 +83,7 @@ type UserEntity {
   full_name: String
   id: ID!
   identity: String!
+  is_active: Boolean!
   is_block: Boolean!
   is_invited_to_room: Int!
   is_push_notifications: Int!

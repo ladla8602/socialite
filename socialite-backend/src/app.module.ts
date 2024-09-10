@@ -18,6 +18,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './modules/auth/jwt.guard';
 import * as redisStore from 'cache-manager-ioredis';
 import { CacheModule } from '@nestjs/cache-manager';
+import { JwtService } from '@nestjs/jwt';
 
 const levels = {
   http: 10,
@@ -74,13 +75,13 @@ const isProduction = process.env.NODE_ENV === 'production';
         ],
       },
     }),
-    CacheModule.register({
-      store: redisStore,
-      host: 'localhost',  // Redis host
-      port: 6379,         // Redis port
-      ttl: 600,           // Cache TTL in seconds
-      isGlobal: true,     // Optional: Makes the cache module globally available
-    }),
+    // CacheModule.register({
+    //   store: redisStore,
+    //   host: 'localhost',  // Redis host
+    //   port: 6379,         // Redis port
+    //   ttl: 600,           // Cache TTL in seconds
+    //   isGlobal: true,     // Optional: Makes the cache module globally available
+    // }),
     UserModule,
     PostModule,
     AuthModule,
