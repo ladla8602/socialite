@@ -7,11 +7,24 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostEntity } from './entities/post.entity';
 import { UserRepository } from '../user/user.repository';
 import { UserModule } from '../user/user.module';
-import { PostContentEntity } from './entities/post_content.entity';
+import { PostTagEntity } from './entities/post_tag.entity';
+import { PostCommentEntity } from './entities/post_comment.entity';
+import { PostLikeEntity } from './entities/post_like.entity';
+import { TagEntity } from './entities/tag.entity';
+import { PostVideoEntity } from './entities/post_video.entity';
+import { PostImageEntity } from './entities/post_image.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([PostEntity, PostContentEntity]),
+        TypeOrmModule.forFeature([
+            PostEntity,
+            PostTagEntity,
+            PostCommentEntity,
+            PostLikeEntity,
+            PostVideoEntity,
+            TagEntity,
+            PostImageEntity,
+        ]),
         UserModule,
     ],
     controllers: [PostController],

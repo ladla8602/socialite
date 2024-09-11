@@ -3,13 +3,18 @@ import { ObjectCannedACL, PutObjectCommand, PutObjectCommandInput, S3 } from '@a
 import { UploadPath } from "./constants/upload.paths";
 import { ConfigService } from "@nestjs/config";
 import { UserEntity } from "../user/entities/user.entity";
+import { Queue } from "bull";
+import { InjectQueue } from "@nestjs/bull";
 
 @Injectable()
 export class UploadService {
     private s3: S3;
     private publicVisibility: ObjectCannedACL = 'public-read';
     private privateVisibility: ObjectCannedACL = 'private';
-    constructor(private configService: ConfigService) {
+    constructor(
+        @InjectQueue('sightengine') private readonly sightengineQueue: Queue,
+        private configService: ConfigService,
+    ) {
         this.s3 = new S3({
             endpoint: this.configService.get<string>('DIGITALOCEAN_SPACE_ENDPOINT'),
             region: this.configService.get<string>('DIGITALOCEAN_SPACE_REGION'),
@@ -39,6 +44,29 @@ export class UploadService {
             const url = `${this.configService.get<string>('DIGITALOCEAN_SPACE_URL')}/${params.Key}`;
             user.profile = params.Key;
             user.save();
+            return url;
+        } catch (error) {
+            throw new Error(`Failed to upload image: ${error.message}`);
+        }
+    }
+
+    async uploadPostImage(file: Express.Multer.File, postId: string, userId: string): Promise<string> {
+        const timestamp = Date.now();
+        const fileName = `${postId}_${timestamp}_${file.originalname}`;
+        const filePath = this.getFilePath(UploadPath.POST_IMAGE_PATH, userId, fileName);
+        const params: PutObjectCommandInput = {
+            Bucket: process.env.DIGITALOCEAN_SPACE_BUCKET,
+            Key: filePath,
+            Body: file.buffer,
+            ContentType: file.mimetype,
+            ACL: this.publicVisibility,
+        };
+        try {
+            const command = new PutObjectCommand(params);
+            await this.s3.send(command);
+            const url = `${this.configService.get<string>('DIGITALOCEAN_SPACE_URL')}/${params.Key}`;
+            // Add job to the queue
+            this.sightengineQueue.add({ imageUrl: url, postId: postId });
             return url;
         } catch (error) {
             throw new Error(`Failed to upload image: ${error.message}`);

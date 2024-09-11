@@ -4,6 +4,8 @@ import { EntityRelationalHelper } from '../../../utils/relation-entity-helper';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index, Unique, BeforeInsert, BeforeUpdate, OneToMany, DeleteDateColumn } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { PostEntity } from '../../post/entities/post.entity';
+import { PostCommentEntity } from '../../../modules/post/entities/post_comment.entity';
+import { PostLikeEntity } from '../../../modules/post/entities/post_like.entity';
 
 @ObjectType()
 @Entity({ name: 'users' })
@@ -113,7 +115,15 @@ export class UserEntity extends EntityRelationalHelper {
     @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     updated_at: Date;
 
-    @Field(() => [PostEntity])  // Expose the posts array in GraphQL
-    @OneToMany(() => PostEntity, (post) => post.user)  // Relation to PostEntity
+    @Field(() => [PostEntity])
+    @OneToMany(() => PostEntity, (post) => post.user)
     posts: PostEntity[];
+
+    @Field(() => [PostCommentEntity])
+    @OneToMany(() => PostCommentEntity, comment => comment.user)
+    comments: PostCommentEntity[];
+
+    @Field(() => [PostLikeEntity])
+    @OneToMany(() => PostLikeEntity, like => like.user)
+    likes: PostLikeEntity[];
 }

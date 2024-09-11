@@ -90,12 +90,7 @@ export class UserRepository {
 
     async findOneByUsername(username: string): Promise<UserEntity | undefined> {
         this.logger.info(`Fetching user with username: ${username}`);
-        try {
-            return await this.userRepository.findOne({ where: { username: username } });
-        } catch (error) {
-            this.logger.error(`Error fetching user with username: ${username}`, error);
-            throw new Error('Could not fetch user');
-        }
+        return await this.userRepository.findOne({ where: { username: username } });
     }
 
     async create(userData: Partial<UserEntity>): Promise<UserEntity> {

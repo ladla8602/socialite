@@ -1,9 +1,13 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
 import { UserEntity } from '../../user/entities/user.entity';
 import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToOne, JoinColumn, DeleteDateColumn, OneToMany } from 'typeorm';
-import { PostContentEntity } from './post_content.entity';
+import { PostTagEntity } from './post_tag.entity';
 import { PostImageEntity } from './post_image.entity';
 import { PostVideoEntity } from './post_video.entity';
+import { PostCommentEntity } from './post_comment.entity';
+import { PostLikeEntity } from './post_like.entity';
+import { Expose } from 'class-transformer';
+import { TagEntity } from './tag.entity';
 
 @ObjectType()  // This decorator is used for GraphQL schema generation
 @Entity({ name: 'posts' })
@@ -13,24 +17,25 @@ export class PostEntity {
     id: string;
 
     @Field(() => UserEntity)
+    @Expose()
     @ManyToOne(() => UserEntity, (user) => user.posts)
     user: UserEntity;
 
-    @Field({ nullable: true })  // Field exposed in GraphQL
-    @Column({ type: 'text', nullable: true })
-    desc?: string;
+    @Field(() => Boolean)
+    @Column({ type: 'boolean', default: false })
+    is_active?: boolean;
 
-    @Field({ nullable: true })  // Field exposed in GraphQL
+    @Field(() => Int)
+    @Column({ type: 'tinyint', comment: 'image = 1, video = 2' })
+    content_type: number;
+
+    @Field()
+    @Column({ type: 'varchar', length: 255 })
+    content: string;
+
+    @Field({ nullable: true })
     @Column({ type: 'varchar', length: 255, nullable: true })
-    tags?: string;
-
-    @Field(() => Int)  // Field exposed in GraphQL
-    @Column({ type: 'int', default: 0 })
-    comments_count: number;
-
-    @Field(() => Int)  // Field exposed in GraphQL
-    @Column({ type: 'int', default: 0 })
-    likes_count: number;
+    thumbnail?: string;
 
     @Field({ nullable: true })
     @DeleteDateColumn({ type: 'timestamp', nullable: true })
@@ -44,17 +49,25 @@ export class PostEntity {
     @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     updated_at: Date;
 
-    @Field(() => PostContentEntity, { nullable: true })
-    @OneToOne(() => PostContentEntity, (postContent) => postContent.post, { cascade: true })  // One-to-One relation with PostContentEntity
-    @JoinColumn()  // To specify that this entity owns the relationship
-    postContent: PostContentEntity;
-
-    @Field(() => [PostImageEntity])
+    @Field(() => [PostImageEntity], { nullable: true })
     @OneToMany(() => PostImageEntity, (image) => image.post, { cascade: true })
     postImages?: PostImageEntity[];
 
     @Field(() => PostVideoEntity, { nullable: true })
     @OneToOne(() => PostVideoEntity, (video) => video.post, { cascade: true })
-    @JoinColumn() // To specify that this entity owns the relationship
     postVideo?: PostVideoEntity;
+
+    @OneToMany(() => PostTagEntity, postTags => postTags.post)
+    postTags?: PostTagEntity[];
+
+    @Field(() => [PostCommentEntity], { nullable: true })
+    @OneToMany(() => PostCommentEntity, comment => comment.post)
+    comments?: PostCommentEntity[];
+
+    @Field(() => [PostLikeEntity], { nullable: true })
+    @OneToMany(() => PostLikeEntity, like => like.post)
+    likes?: PostLikeEntity[];
+
+    @Field(() => [TagEntity], { nullable: true })
+    tags: TagEntity[];
 }

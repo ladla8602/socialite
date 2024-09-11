@@ -1,5 +1,5 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
 import { PostEntity } from './post.entity';
 
 @ObjectType()
@@ -10,14 +10,19 @@ export class PostImageEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @ManyToOne(() => PostEntity, (post) => post.postImages)
-    post: PostEntity;
+    @Field(() => Boolean)
+    @Column({ type: 'boolean', default: false })
+    is_active?: boolean;
 
-    @Field()
-    @Column({ type: 'varchar', length: 100 })
-    mime_type: string;
+    @ManyToOne(() => PostEntity, (post) => post.postImages)
+    @JoinColumn()
+    post: PostEntity;
 
     @Field()
     @Column({ type: 'varchar', length: 255 })
     image_url: string;
+
+    @Field(() => Date)
+    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    created_at: Date;
 }
