@@ -8,7 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
             imports: [ConfigModule],
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => ({
-                type: process.env.DATABASE_TYPE as 'mysql' | 'postgres',
+                type: 'mysql',
                 host: configService.get<string>('DATABASE_MASTER_HOST'),
                 port: +configService.get<number>('DATABASE_MASTER_PORT'),
                 username: configService.get<string>('DATABASE_MASTER_USERNAME'),
@@ -17,7 +17,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
                 entities: [__dirname + '/../**/*.entity{.ts,.js}'],
                 seeds: [__dirname + '/seeds/*.seed{.ts,.js}'],
                 factories: [__dirname + '/factories/*.factory{.ts,.js}'],
-                synchronize: false,
+                synchronize: configService.get<boolean>('DATABASE_SYNCHRONIZE', false),
                 migrations: [__dirname + '/../**/*-migrations.{ts,js}'],
                 replication: {
                     master: {

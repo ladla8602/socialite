@@ -6,9 +6,10 @@ import { In, Repository } from "typeorm";
 import { TagEntity } from "./entities/tag.entity";
 import { PostTagEntity } from "./entities/post_tag.entity";
 import { PostImageEntity } from "./entities/post_image.entity";
+import { BaseRepository } from "src/common/base.repository";
 
 @Injectable()
-export class PostRepository {
+export class PostRepository extends BaseRepository<PostEntity> {
     constructor(
         @InjectRepository(PostEntity)
         private readonly postRepository: Repository<PostEntity>,
@@ -19,11 +20,8 @@ export class PostRepository {
         @InjectRepository(PostImageEntity)
         private readonly postImageRepository: Repository<PostImageEntity>,
         private readonly logger: PinoLogger,
-    ) { }
-
-    async createPost(postData: Partial<PostEntity>): Promise<PostEntity> {
-        const post = this.postRepository.create(postData);
-        return this.postRepository.save(post);
+    ) {
+        super(postRepository);
     }
 
     async createTags(postData: Partial<TagEntity>[]): Promise<TagEntity[]> {
@@ -46,13 +44,11 @@ export class PostRepository {
         });
     }
 
-    async findPostById(postId: string): Promise<PostEntity> {
-        return this.postRepository.findOne({
-            where: { id: postId }
-        });
+    insetPostImage(postData: Partial<PostImageEntity>) {
+        this.postImageRepository.insert(postData);
     }
 
-    insetPostImage(postData: Partial<PostImageEntity>) {
+    insetPostImages(postData: Partial<PostImageEntity[]>) {
         this.postImageRepository.insert(postData);
     }
 
