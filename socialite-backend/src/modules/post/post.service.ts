@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { CreatePostInput } from "./dto/create-post.input";
+import { CreateCommentInput, CreatePostInput } from "./dto/create-post.input";
 import { PostEntity } from "./entities/post.entity";
 import { UserRepository } from "../user/user.repository";
 import { PostMessage } from "./constants/post.messages";
@@ -7,12 +7,15 @@ import { PostRepository } from "./post.repository";
 import { TagEntity } from "./entities/tag.entity";
 import { PostTagEntity } from "./entities/post_tag.entity";
 import { PostImageEntity } from "./entities/post_image.entity";
+import { PostCommentEntity } from "./entities/post_comment.entity";
+import { CommentRepository } from "./comment.repository";
 
 @Injectable()
 export class PostService {
     constructor(
         private readonly userRepository: UserRepository,
         private readonly postRepository: PostRepository,
+        private readonly commentRepository: CommentRepository,
     ) { }
 
     // Create a new user
@@ -80,4 +83,38 @@ export class PostService {
             this.postRepository.insetPostImage(postImage);
         }
     }
+    async addPostComment(createCommentInput: CreateCommentInput, userId: string): Promise<PostEntity> {
+        try {
+            // Find the user who is adding the comment
+            const user = await this.userRepository.findOne({ id: userId });
+
+            if (!user.is_active) {
+                throw new Error(PostMessage.ACCOUNT_BLOCKED);
+            }
+
+            // Find the post to which the comment will be added
+            const post = await this.postRepository.findPostById(createCommentInput.postId);
+
+            if (!post) {
+                throw new Error(PostMessage.POST_NOT_FOUND);
+            }
+
+            // Create the comment entity
+            const commentPayload: Partial<PostCommentEntity> = {
+                content: createCommentInput.content,
+                user: user,
+                post: post,
+            };
+
+            // Save the comment to the repository
+            const comment = await this.commentRepository.createComment(commentPayload);
+            if (comment) {
+                return post; // Return the post entity, or you could return the comment entity if preferred
+            }
+            throw new Error(PostMessage.COMMENT_FAILED);
+        } catch (error: unknown) {
+            throw error;
+        }
+    }
+
 }

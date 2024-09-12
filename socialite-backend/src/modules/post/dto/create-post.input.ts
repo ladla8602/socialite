@@ -11,3 +11,19 @@ export class CreatePostInput {
     @Field({ nullable: true })
     hashTags: string;
 }
+
+
+
+@InputType()
+export class CreateCommentInput {
+    @Field()
+    content: string;
+
+    @Field()
+    postId: string;
+
+}
+
+// function IsUUID(): (target: CreateCommentInput, propertyKey: "postId") => void {
+//     throw new Error('Function not implemented.');
+// }

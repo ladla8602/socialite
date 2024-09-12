@@ -1,10 +1,11 @@
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { PostEntity } from './entities/post.entity';
-import { CreatePostInput } from './dto/create-post.input';
+import { CreateCommentInput, CreatePostInput } from './dto/create-post.input';
 import { PinoLogger } from 'nestjs-pino';
 import { PostService } from './post.service';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt.guard';
+import { PostCommentEntity } from './entities/post_comment.entity';
 
 @Resolver(() => PostEntity)
 export class PostResolver {
@@ -37,6 +38,22 @@ export class PostResolver {
             return this.postService.findPostsByUser(userId);
         } catch (error) {
             this.logger.error('Error during getPosts mutation', error);
+            throw error;
+        }
+    }
+
+    @Mutation(() => PostCommentEntity)
+    @UseGuards(JwtAuthGuard)
+    async addPostComment(
+        @Args('addPostComment') addPostCommentInput: CreateCommentInput,
+        @Context() context: any
+    ) {
+        try {
+            const userId = context.req.user.id;
+            return this.postService.addPostComment(addPostCommentInput, userId);
+        } catch (error) {
+
+            this.logger.error('Error during addPost mutation', error);
             throw error;
         }
     }

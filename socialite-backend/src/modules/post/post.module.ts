@@ -13,6 +13,7 @@ import { PostLikeEntity } from './entities/post_like.entity';
 import { TagEntity } from './entities/tag.entity';
 import { PostVideoEntity } from './entities/post_video.entity';
 import { PostImageEntity } from './entities/post_image.entity';
+import { CommentRepository } from './comment.repository';
 
 @Module({
     imports: [
@@ -28,7 +29,7 @@ import { PostImageEntity } from './entities/post_image.entity';
         UserModule,
     ],
     controllers: [PostController],
-    providers: [PostService, PostRepository, PostResolver],
-    exports: [PostService, PostRepository],
+    providers: [PostService, PostRepository, PostResolver, CommentRepository],
+    exports: [PostService, PostRepository, CommentRepository],
 })
 export class PostModule { }

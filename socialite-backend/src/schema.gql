@@ -1,5 +1,10 @@
 directive @upper on FIELD_DEFINITION
 
+input CreateCommentInput {
+  content: String!
+  postId: String!
+}
+
 input CreatePostInput {
   content: String!
   content_type: Float!
@@ -35,6 +40,7 @@ type LoginResponse {
 }
 
 type Mutation {
+  addPostComment(addPostComment: CreateCommentInput!): PostCommentEntity!
   createPost(createPostInput: CreatePostInput!): PostEntity!
   createUser(createUserInput: CreateUserInput!): UserEntity!
   login(loginInput: LoginInput!): LoginResponse!
@@ -52,8 +58,8 @@ type PostEntity {
   content_type: Int!
   created_at: DateTime!
   deleted_at: DateTime
-  desc: String
   id: ID!
+  is_active: Boolean!
   likes: [PostLikeEntity!]
   postImages: [PostImageEntity!]
   postVideo: PostVideoEntity
@@ -67,6 +73,7 @@ type PostImageEntity {
   created_at: DateTime!
   id: ID!
   image_url: String!
+  is_active: Boolean!
 }
 
 type PostLikeEntity {
