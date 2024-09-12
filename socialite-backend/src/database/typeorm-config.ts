@@ -4,17 +4,18 @@ import { NestFactory } from '@nestjs/core';
 import 'reflect-metadata';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { TypeORMCLIModule } from './typeorm-cli.module';
+import { SeederOptions } from 'typeorm-extension';
 
 @Injectable()
 export class AppDataSource {
     private dataSource: DataSource;
 
-    async getDataSourceOptions(): Promise<DataSourceOptions> {
+    async getDataSourceOptions(): Promise<DataSourceOptions & SeederOptions> {
         const appCtx = await NestFactory.createApplicationContext(TypeORMCLIModule);
         const configService = appCtx.get(ConfigService);
 
         return {
-            type: process.env.DATABASE_TYPE as 'mysql' | 'postgres',
+            type: configService.get<string>('DATABASE_TYPE') as 'mysql' | 'postgres',
             host: configService.get<string>('DATABASE_MASTER_HOST'),
             port: +configService.get<number>('DATABASE_MASTER_PORT'),
             username: configService.get<string>('DATABASE_MASTER_USERNAME'),
@@ -25,6 +26,8 @@ export class AppDataSource {
             logging: process.env.NODE_ENV !== 'production',
             entities: [__dirname + '/../**/*.entity{.ts,.js}'],
             migrations: [__dirname + '/../**/*-migrations.{ts,js}'],
+            seeds: [__dirname + '/seeds/*.seed{.ts,.js}'],
+            factories: [__dirname + '/factories/*.factory{.ts,.js}'],
             replication: {
                 master: {
                     host: configService.get<string>('DATABASE_MASTER_HOST'),

@@ -43,6 +43,7 @@ type Mutation {
   addPostComment(addPostComment: CreateCommentInput!): PostCommentEntity!
   createPost(createPostInput: CreatePostInput!): PostEntity!
   createUser(createUserInput: CreateUserInput!): UserEntity!
+  follow(followingId: String!): UserFollowEntity!
   login(loginInput: LoginInput!): LoginResponse!
   refreshToken(refreshToken: String!): LoginResponse!
 }
@@ -110,13 +111,13 @@ type UserEntity {
   background_image: String
   bio: String
   block_user_ids: [String!]
-  comments: [PostCommentEntity!]!
+  comments: [PostCommentEntity!]
   created_at: DateTime!
   deleted_at: DateTime
   device_token: String
   device_type: Int!
-  followers: Int
-  following: Int
+  followers_users: [UserFollowEntity!]
+  following_users: [UserFollowEntity!]
   full_name: String
   id: ID!
   identity: String!
@@ -126,11 +127,18 @@ type UserEntity {
   is_push_notifications: Int!
   is_verified: Int!
   latitude: Float
-  likes: [PostLikeEntity!]!
+  likes: [PostLikeEntity!]
   login_type: Int
   longitude: Float
-  posts: [PostEntity!]!
+  posts: [PostEntity!]
   profile: String
   updated_at: DateTime!
   username: String!
+}
+
+type UserFollowEntity {
+  created_at: DateTime!
+  followed: UserEntity!
+  follower: UserEntity!
+  id: ID!
 }

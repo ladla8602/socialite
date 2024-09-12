@@ -21,7 +21,7 @@ export class PostService {
     // Create a new user
     async create(createPostInput: CreatePostInput, userId: string): Promise<PostEntity> {
         try {
-            const user = await this.userRepository.findOne({ id: userId });
+            const user = await this.userRepository.findOne(userId);
 
             if (!user.is_active) {
                 throw new Error(PostMessage.ACCOUNT_BLOCKED);
@@ -29,7 +29,7 @@ export class PostService {
             let postEntityPayload: Partial<PostEntity> = {};
             postEntityPayload = { ...createPostInput };
             postEntityPayload.user = user;
-            const post = await this.postRepository.createPost(postEntityPayload);
+            const post = await this.postRepository.create(postEntityPayload);
             if (post) {
                 // create tags
                 if (createPostInput.hashTags) {
@@ -70,7 +70,7 @@ export class PostService {
     }
 
     async savePostImage(postId: string, image_url: string, status: boolean) {
-        const post = await this.postRepository.findPostById(postId);
+        const post = await this.postRepository.findOne(postId);
         if (post) {
             const urlObj = new URL(image_url);
             const pathOnly = urlObj.pathname;

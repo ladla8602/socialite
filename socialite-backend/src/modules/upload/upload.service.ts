@@ -5,6 +5,7 @@ import { ConfigService } from "@nestjs/config";
 import { UserEntity } from "../user/entities/user.entity";
 import { Queue } from "bull";
 import { InjectQueue } from "@nestjs/bull";
+import { PostService } from "../post/post.service";
 
 @Injectable()
 export class UploadService {
@@ -14,6 +15,7 @@ export class UploadService {
     constructor(
         @InjectQueue('sightengine') private readonly sightengineQueue: Queue,
         private configService: ConfigService,
+        private readonly postService: PostService,
     ) {
         this.s3 = new S3({
             endpoint: this.configService.get<string>('DIGITALOCEAN_SPACE_ENDPOINT'),
@@ -66,7 +68,11 @@ export class UploadService {
             await this.s3.send(command);
             const url = `${this.configService.get<string>('DIGITALOCEAN_SPACE_URL')}/${params.Key}`;
             // Add job to the queue
-            this.sightengineQueue.add({ imageUrl: url, postId: postId });
+            //TODO:: Uncomment below line
+            // this.sightengineQueue.add({ imageUrl: url, postId: postId });
+
+            //TODO:: Comment below line
+            this.postService.savePostImage(postId, url, true);
             return url;
         } catch (error) {
             throw new Error(`Failed to upload image: ${error.message}`);
