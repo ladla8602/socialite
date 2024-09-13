@@ -40,7 +40,7 @@ export class PostRepository extends BaseRepository<PostEntity> {
     async findPostsByUser(userId: string): Promise<PostEntity[]> {
         return this.postRepository.find({
             where: { user: { id: userId } },
-            relations: ['postTags', 'postTags.tag']
+            relations: ['postTags', 'postTags.tag', 'comments']
         });
     }
 

@@ -86,14 +86,14 @@ export class PostService {
     async addPostComment(createCommentInput: CreateCommentInput, userId: string): Promise<PostEntity> {
         try {
             // Find the user who is adding the comment
-            const user = await this.userRepository.findOne({ id: userId });
+            const user = await this.userRepository.findOne(userId);
 
             if (!user.is_active) {
                 throw new Error(PostMessage.ACCOUNT_BLOCKED);
             }
 
-            // Find the post to which the comment will be added
-            const post = await this.postRepository.findPostById(createCommentInput.postId);
+            // Find the post by its ID to which the comment will be added
+            const post = await this.postRepository.findOne(createCommentInput.postId); // Assuming postId is part of CreateCommentInput
 
             if (!post) {
                 throw new Error(PostMessage.POST_NOT_FOUND);
@@ -103,18 +103,20 @@ export class PostService {
             const commentPayload: Partial<PostCommentEntity> = {
                 content: createCommentInput.content,
                 user: user,
-                post: post,
+                post: post, // Link the comment to the found post
             };
 
             // Save the comment to the repository
             const comment = await this.commentRepository.createComment(commentPayload);
             if (comment) {
-                return post; // Return the post entity, or you could return the comment entity if preferred
+                return post;
             }
+
             throw new Error(PostMessage.COMMENT_FAILED);
         } catch (error: unknown) {
             throw error;
         }
     }
+
 
 }

@@ -10,10 +10,6 @@ export class PostLikeEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Field(() => Boolean)
-    @Column({ type: 'boolean' })
-    isLike: boolean;  // true for like, false for dislike
-
     @Field(() => Date)
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     created_at: Date;

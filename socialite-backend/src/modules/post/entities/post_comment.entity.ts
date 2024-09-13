@@ -10,6 +10,7 @@ export class PostCommentEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
+    @Field()
     @Column({ type: 'text' })
     content: string;
 
