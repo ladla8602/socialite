@@ -46,6 +46,7 @@ type Mutation {
   follow(followingId: String!): UserFollowEntity!
   login(loginInput: LoginInput!): LoginResponse!
   refreshToken(refreshToken: String!): LoginResponse!
+  unfollow(followingId: String!): String!
 }
 
 type PostCommentEntity {
@@ -96,7 +97,7 @@ type PostVideoEntity {
 }
 
 type Query {
-  getPosts: [PostEntity!]!
+  getPosts(after: String, first: Int! = 10): [PostEntity!]!
   hello: String!
   users: [UserEntity!]!
 }

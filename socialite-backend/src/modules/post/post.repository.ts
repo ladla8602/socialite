@@ -7,6 +7,7 @@ import { TagEntity } from "./entities/tag.entity";
 import { PostTagEntity } from "./entities/post_tag.entity";
 import { PostImageEntity } from "./entities/post_image.entity";
 import { BaseRepository } from "src/common/base.repository";
+import { PageInfo } from "./../../common/dto/pagination.dto";
 
 @Injectable()
 export class PostRepository extends BaseRepository<PostEntity> {
@@ -37,11 +38,21 @@ export class PostRepository extends BaseRepository<PostEntity> {
         this.postTagsRepository.insert(postData);
     }
 
-    async findPostsByUser(userId: string): Promise<PostEntity[]> {
-        return this.postRepository.find({
-            where: { user: { id: userId } },
-            relations: ['postTags', 'postTags.tag', 'comments']
-        });
+    async findPostsByUser(userId: string, first: number, after?: string): Promise<PostEntity[]> {
+        const query = this.postRepository.createQueryBuilder('posts')
+            .leftJoinAndSelect('posts.postTags', 'postTags')
+            .leftJoinAndSelect('postTags.tag', 'tag')
+            .leftJoinAndSelect('posts.postImages', 'postImages')
+            .leftJoinAndSelect('posts.comments', 'comments');
+
+        if (after) {
+            query.where('posts.id > :after', { after });
+        }
+
+        query.andWhere('posts.userId = :userId', { userId });
+
+        const posts = await query.take(first + 1).getMany();
+        return posts;
     }
 
     insetPostImage(postData: Partial<PostImageEntity>) {

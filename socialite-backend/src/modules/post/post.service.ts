@@ -9,6 +9,8 @@ import { PostTagEntity } from "./entities/post_tag.entity";
 import { PostImageEntity } from "./entities/post_image.entity";
 import { PostCommentEntity } from "./entities/post_comment.entity";
 import { CommentRepository } from "./comment.repository";
+import { PageInfo } from "src/common/dto/pagination.dto";
+import { PaginatedPost } from "./dto/post.response.dto";
 
 @Injectable()
 export class PostService {
@@ -54,16 +56,23 @@ export class PostService {
         }
     }
 
-    async findPostsByUser(userId: string): Promise<PostEntity[]> {
+    async findPostsByUser(userId: string, first: number, after?: string): Promise<PaginatedPost> {
         try {
-            let posts = await this.postRepository.findPostsByUser(userId);
 
-            posts.forEach(post => {
-                if (post.postTags) {
-                    post.tags = post.postTags.map(postTag => postTag.tag);
-                }
-            });
-            return posts;
+            let posts = await this.postRepository.findPostsByUser(userId, first, after);
+
+            const edges = posts.slice(0, first);
+            const hasNextPage = posts.length > first;
+
+            return {
+                edges,
+                pageInfo: {
+                    hasNextPage,
+                    hasPreviousPage: !!after,
+                    startCursor: edges.length ? edges[0].id : null,
+                    endCursor: edges.length ? edges[edges.length - 1].id : null,
+                },
+            };
         } catch (error: unknown) {
             throw error;
         }
