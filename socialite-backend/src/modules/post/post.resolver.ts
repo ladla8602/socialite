@@ -5,7 +5,8 @@ import { PinoLogger } from 'nestjs-pino';
 import { PostService } from './post.service';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt.guard';
-
+import { PaginationArgs } from 'src/common/dto/pagination-args.dto';
+import { PaginatedPost } from './dto/post.response.dto';
 @Resolver(() => PostEntity)
 export class PostResolver {
     constructor(
@@ -29,12 +30,16 @@ export class PostResolver {
         }
     }
 
-    @Query(() => [PostEntity])
+    @Query(() => PaginatedPost)
     @UseGuards(JwtAuthGuard)
-    async getPosts(@Context() context: any) {
+    async getPosts(
+        @Args() paginationArgs: PaginationArgs,
+        @Context() context: any,
+    ) {
+        const { first, after } = paginationArgs;
         try {
             const userId = context.req.user.id;
-            return this.postService.findPostsByUser(userId);
+            return await this.postService.findPostsByUser(userId, first, after);
         } catch (error) {
             this.logger.error('Error during getPosts mutation', error);
             throw error;
