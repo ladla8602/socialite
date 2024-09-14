@@ -8,6 +8,7 @@ import { PostTagEntity } from "./entities/post_tag.entity";
 import { PostImageEntity } from "./entities/post_image.entity";
 import { BaseRepository } from "src/common/base.repository";
 import { PageInfo } from "./../../common/dto/pagination.dto";
+import { PostCommentEntity } from "./entities/post_comment.entity";
 
 @Injectable()
 export class PostRepository extends BaseRepository<PostEntity> {
@@ -18,6 +19,8 @@ export class PostRepository extends BaseRepository<PostEntity> {
         private readonly tagRepository: Repository<TagEntity>,
         @InjectRepository(PostTagEntity)
         private readonly postTagsRepository: Repository<PostTagEntity>,
+        @InjectRepository(PostCommentEntity)
+        private readonly commentRepository: Repository<PostCommentEntity>,
         @InjectRepository(PostImageEntity)
         private readonly postImageRepository: Repository<PostImageEntity>,
         private readonly logger: PinoLogger,
@@ -61,6 +64,11 @@ export class PostRepository extends BaseRepository<PostEntity> {
 
     insetPostImages(postData: Partial<PostImageEntity[]>) {
         this.postImageRepository.insert(postData);
+    }
+
+    async createComment(commentPayload: Partial<PostCommentEntity>): Promise<PostCommentEntity> {
+        const post = this.commentRepository.create(commentPayload);
+        return this.commentRepository.save(post);
     }
 
 }

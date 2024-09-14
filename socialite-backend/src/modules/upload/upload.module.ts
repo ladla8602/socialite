@@ -6,6 +6,7 @@ import { SightengineService } from 'src/sightengine.processor/sightengine.servic
 import { BullModule } from '@nestjs/bull';
 import { PostService } from '../post/post.service';
 import { PostModule } from '../post/post.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
     imports: [
@@ -16,6 +17,7 @@ import { PostModule } from '../post/post.module';
                 port: 6379,        // Redis port
             },
         }),
+        UserModule,
         PostModule,
     ],
     controllers: [UploadController],

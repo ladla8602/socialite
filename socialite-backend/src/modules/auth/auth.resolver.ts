@@ -36,6 +36,7 @@ export class AuthResolver {
     async refreshToken(
         @Args('refreshToken') refreshToken: string,
     ) {
+
         const newAccessToken = await this.authService.refresh(refreshToken);
         return newAccessToken;
     }

@@ -52,9 +52,9 @@ export class UploadController {
             throw new HttpException('No image provided', HttpStatus.BAD_REQUEST);
         }
 
-        const user: UserEntity = req.user;
+        const userId: string = req.user.id;
         try {
-            const imageUrl = await this.uploadService.uploadUserProfile(file, user);
+            const imageUrl = await this.uploadService.uploadUserProfile(file, userId);
             return apiResponse(HttpStatus.OK, UploadMessage.PROFILE_UPLOAD_SUCCESS, { url: imageUrl });
         } catch (error) {
             throw new HttpException(`Failed to upload image: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -82,6 +82,7 @@ export class UploadController {
         @Body('postId') postId: string,
         @Req() req: any,
     ) {
+
         if (req.fileValidationError) {
             throw new HttpException(req.fileValidationError, HttpStatus.BAD_REQUEST);
         }

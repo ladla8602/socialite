@@ -1,4 +1,5 @@
 import { InputType, Field, ObjectType } from '@nestjs/graphql';
+import { UserEntity } from 'src/modules/user/entities/user.entity';
 
 @InputType()
 export class LoginInput {
@@ -9,7 +10,7 @@ export class LoginInput {
     password: string;
 
     @Field({ nullable: true })
-    device_type: string;
+    device_type: number;
 
     @Field({ nullable: true })
     device_token: string;
@@ -22,4 +23,7 @@ export class LoginResponse {
 
     @Field()
     refresh_token: string;
+
+    @Field(() => UserEntity, { nullable: true })
+    user?: UserEntity;
 }

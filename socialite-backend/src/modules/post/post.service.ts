@@ -8,8 +8,6 @@ import { TagEntity } from "./entities/tag.entity";
 import { PostTagEntity } from "./entities/post_tag.entity";
 import { PostImageEntity } from "./entities/post_image.entity";
 import { PostCommentEntity } from "./entities/post_comment.entity";
-import { CommentRepository } from "./comment.repository";
-import { PageInfo } from "src/common/dto/pagination.dto";
 import { PaginatedPost } from "./dto/post.response.dto";
 
 @Injectable()
@@ -17,7 +15,6 @@ export class PostService {
     constructor(
         private readonly userRepository: UserRepository,
         private readonly postRepository: PostRepository,
-        private readonly commentRepository: CommentRepository,
     ) { }
 
     // Create a new user
@@ -116,7 +113,7 @@ export class PostService {
             };
 
             // Save the comment to the repository
-            const comment = await this.commentRepository.createComment(commentPayload);
+            const comment = await this.postRepository.createComment(commentPayload);
             if (comment) {
                 return post;
             }

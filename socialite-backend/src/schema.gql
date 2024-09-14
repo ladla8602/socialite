@@ -29,7 +29,7 @@ scalar DateTime
 
 input LoginInput {
   device_token: String
-  device_type: String
+  device_type: Float
   identity: String!
   password: String!
 }
@@ -37,6 +37,7 @@ input LoginInput {
 type LoginResponse {
   access_token: String!
   refresh_token: String!
+  user: UserEntity
 }
 
 type Mutation {
@@ -49,7 +50,20 @@ type Mutation {
   unfollow(followingId: String!): String!
 }
 
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+}
+
+type PaginatedPost {
+  edges: [PostEntity!]!
+  pageInfo: PageInfo!
+}
+
 type PostCommentEntity {
+  content: String!
   created_at: DateTime!
   id: ID!
 }
@@ -81,7 +95,6 @@ type PostImageEntity {
 type PostLikeEntity {
   created_at: DateTime!
   id: ID!
-  isLike: Boolean!
 }
 
 type PostTagEntity {
@@ -97,7 +110,7 @@ type PostVideoEntity {
 }
 
 type Query {
-  getPosts(after: String, first: Int! = 10): [PostEntity!]!
+  getPosts(after: String, first: Int! = 10): PaginatedPost!
   hello: String!
   users: [UserEntity!]!
 }

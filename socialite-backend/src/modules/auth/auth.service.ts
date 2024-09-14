@@ -21,7 +21,7 @@ export class AuthService {
             if (user && !user.is_active) {
                 throw new Error(AuthMessage.ACCOUNT_BLOCKED);
             }
-
+            console.log(await bcrypt.compare(loginInput.password, user.password));
             if (user && await bcrypt.compare(loginInput.password, user.password)) {
                 return user;
             }
@@ -47,6 +47,7 @@ export class AuthService {
             return {
                 access_token: accessToken,
                 refresh_token: refreshToken,
+                user: user,
             };
         } catch (error) {
             this.logger.error('Error during login', error);

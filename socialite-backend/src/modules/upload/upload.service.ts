@@ -6,6 +6,7 @@ import { UserEntity } from "../user/entities/user.entity";
 import { Queue } from "bull";
 import { InjectQueue } from "@nestjs/bull";
 import { PostService } from "../post/post.service";
+import { UserService } from "../user/user.service";
 
 @Injectable()
 export class UploadService {
@@ -16,6 +17,7 @@ export class UploadService {
         @InjectQueue('sightengine') private readonly sightengineQueue: Queue,
         private configService: ConfigService,
         private readonly postService: PostService,
+        private readonly userService: UserService,
     ) {
         this.s3 = new S3({
             endpoint: this.configService.get<string>('DIGITALOCEAN_SPACE_ENDPOINT'),
@@ -31,8 +33,8 @@ export class UploadService {
         return path.replace(':id', id) + fileName;
     }
 
-    async uploadUserProfile(file: Express.Multer.File, user: UserEntity): Promise<string> {
-        const filePath = this.getFilePath(UploadPath.PROFILE_PATH, user.id, file.originalname);
+    async uploadUserProfile(file: Express.Multer.File, userId: string): Promise<string> {
+        const filePath = this.getFilePath(UploadPath.PROFILE_PATH, userId, file.originalname);
         const params: PutObjectCommandInput = {
             Bucket: process.env.DIGITALOCEAN_SPACE_BUCKET,
             Key: filePath,
@@ -42,11 +44,17 @@ export class UploadService {
         };
         try {
             const command = new PutObjectCommand(params);
-            await this.s3.send(command);
-            const url = `${this.configService.get<string>('DIGITALOCEAN_SPACE_URL')}/${params.Key}`;
-            user.profile = params.Key;
-            user.save();
-            return url;
+            const user = await this.userService.findOneById(userId);
+            if (user) {
+                await this.s3.send(command);
+                const url = `${this.configService.get<string>('DIGITALOCEAN_SPACE_URL')}/${params.Key}`;
+                user.profile = params.Key;
+
+                await user.save();
+                return url;
+            }
+            throw new Error(`Failed to upload profile image`);
+
         } catch (error) {
             throw new Error(`Failed to upload image: ${error.message}`);
         }
