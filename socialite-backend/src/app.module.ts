@@ -18,6 +18,7 @@ import { UploadModule } from './modules/upload/upload.module';
 import { BullModule } from '@nestjs/bull';
 import { SightengineProcessor } from './sightengine.processor/sightengine.processor';
 import { SightengineService } from './sightengine.processor/sightengine.service';
+import { OpenAiService } from './common/services/openai.service';
 
 const levels = {
   http: 10,

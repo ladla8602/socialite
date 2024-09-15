@@ -34,7 +34,7 @@ export class PostResolver {
 
     @Query(() => PaginatedPost)
     @UseGuards(JwtAuthGuard)
-    async getPosts(
+    async getUserPosts(
         @Args() paginationArgs: PaginationArgs,
         @Context() context: any,
     ) {

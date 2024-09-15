@@ -60,7 +60,6 @@ export class PostEntity {
     @OneToMany(() => PostTagEntity, postTags => postTags.post)
     postTags?: PostTagEntity[];
 
-    @Field(() => [PostCommentEntity], { nullable: true })
     @OneToMany(() => PostCommentEntity, comment => comment.post)
     comments?: PostCommentEntity[];
 
@@ -70,4 +69,7 @@ export class PostEntity {
 
     @Field(() => [TagEntity], { nullable: true })
     tags: TagEntity[];
+
+    @Field(() => Int, { defaultValue: 0 })
+    commentsCount: number;
 }

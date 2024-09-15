@@ -16,13 +16,6 @@ export class UserResolver {
         private readonly pubSub: PubSub,
     ) { }
 
-    @Query(() => [UserEntity])
-    @UseGuards(JwtAuthGuard)
-    async users(@Context() context: any) {
-        console.log(context.req.user)
-        return await this.userService.findAll();
-    }
-
     @Mutation(() => UserFollowEntity)
     @UseGuards(JwtAuthGuard)
     async follow(
@@ -53,5 +46,21 @@ export class UserResolver {
             this.logger.error('Error during unfollow mutation', error);
             throw error;
         }
+    }
+
+    @Query(() => UserEntity)
+    @UseGuards(JwtAuthGuard)
+    async profile(
+        @Context() context: any,
+    ) {
+        return context.req.user;
+        // try {
+        //     const followerId = id;  // Get the current logged-in user's ID
+        //     return this.userService.unfollowUser(followerId, followingId);
+        // } catch (error) {
+        //     // Handle and log the error appropriately
+        //     this.logger.error('Error during unfollow mutation', error);
+        //     throw error;
+        // }
     }
 }

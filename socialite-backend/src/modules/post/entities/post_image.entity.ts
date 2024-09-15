@@ -22,6 +22,12 @@ export class PostImageEntity {
     @Column({ type: 'varchar', length: 255 })
     image_url: string;
 
+    @Field(() => String)
+    get fullImageUrl(): string {
+        const host = process.env.DIGITALOCEAN_SPACE_URL || '';  // Get the HOST from environment variables
+        return `${host}/${this.image_url}`;    // Append HOST to image_url
+    }
+
     @Field(() => Date)
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     created_at: Date;

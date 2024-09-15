@@ -29,9 +29,17 @@ export class UserService {
         }
     }
 
-    // Find all users
-    async findAll(): Promise<UserEntity[]> {
-        return await this.userRepository.findAll();
+    async findOneByUsername(username: string): Promise<Boolean> {
+        try {
+            const user = await this.userRepository.findOneByUsername(username);
+
+            if (user) {
+                return true;
+            }
+            return false;
+        } catch (error: unknown) {
+            throw null;
+        }
     }
 
     // Create a new user
