@@ -32,7 +32,18 @@ export class UserService {
     async findOneByUsername(username: string): Promise<Boolean> {
         try {
             const user = await this.userRepository.findOneByUsername(username);
+            if (user) {
+                return true;
+            }
+            return false;
+        } catch (error: unknown) {
+            throw null;
+        }
+    }
 
+    async findOneByEmail(email: string): Promise<Boolean> {
+        try {
+            const user = await this.userRepository.findOneByEmail(email);
             if (user) {
                 return true;
             }

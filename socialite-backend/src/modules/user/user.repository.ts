@@ -65,6 +65,11 @@ export class UserRepository extends BaseRepository<UserEntity> {
         return await this.userRepository.findOne({ where: { username: username } });
     }
 
+    async findOneByEmail(email: string): Promise<UserEntity | undefined> {
+        this.logger.info(`Fetching user with email: ${email}`);
+        return await this.userRepository.findOne({ where: { identity: email } });
+    }
+
     async create(userData: Partial<UserEntity>): Promise<UserEntity> {
         const user = this.userRepository.create(userData);
         return this.userRepository.save(user);

@@ -19,5 +19,4 @@ export class CreateCommentInput {
 
     @Field()
     postId: string;
-
 }

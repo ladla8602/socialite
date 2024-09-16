@@ -10,6 +10,7 @@ import { UserService } from '../user/user.service';
 import { OpenAiService } from 'src/common/services/openai.service';
 import { CheckUsernameInput } from './dto/check-username.input';
 import { SuggestUsernameInput } from './dto/suggest-username.input';
+import { CheckEmailInput } from './dto/check-email.input';
 
 @Resolver()
 export class AuthResolver {
@@ -80,6 +81,20 @@ export class AuthResolver {
             return await this.openaiService.generateUsername(name, email);
         } catch (error) {
             this.logger.error('Error during suggestUsername query', error);
+            throw error;
+        }
+    }
+
+    @Query(() => Boolean)
+    @UsePipes(new ValidationPipe({ transform: true }))
+    async checkEmailExists(
+        @Args('checkEmailInput') checkEmailInput: CheckEmailInput,
+    ) {
+        const { email } = checkEmailInput;
+        try {
+            return await this.userService.findOneByEmail(email);
+        } catch (error) {
+            this.logger.error('Error during checkEmailExists query', error);
             throw error;
         }
     }
