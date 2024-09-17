@@ -5,7 +5,7 @@ import { IsString, Length, Matches, IsEmail } from 'class-validator';
 export class CheckEmailInput {
     @Field()
     @IsString()
-    @Length(3, 20, { message: 'Email must be between 3 and 20 characters' })
+    @Length(3, 255, { message: 'Email must be between 3 and 20 characters' })
     @IsEmail()
     email: string;
 }

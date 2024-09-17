@@ -46,11 +46,12 @@ export class AuthResolver {
         return newAccessToken;
     }
 
-    @Mutation(() => UserEntity)
+    @Mutation(() => LoginResponse)
     async createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
         try {
-            const user = this.userService.create(createUserInput);
-            return user;
+            const user = await this.userService.create(createUserInput);
+            const response = await this.authService.login(user);
+            return response;
         } catch (error) {
             // Handle and log the error appropriately
             this.logger.error('Error during createUser mutation', error);
