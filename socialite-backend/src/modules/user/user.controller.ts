@@ -15,18 +15,4 @@ export class UserController {
     ) {
         this.logger.setContext(UserController.name);
     }
-
-    @Get()
-    @HttpCode(HttpStatus.OK)
-    @UseGuards(JwtAuthGuard)
-    async users(@Req() req: any): Promise<ApiResponse<any>> {
-        try {
-            console.log(req.user.id)
-            const users = await this.userService.findAll();
-            return apiResponse(HttpStatus.OK, '', users);
-        } catch (error) {
-            this.logger.error({ error: error }, 'Error');
-            throw error;
-        }
-    }
 }

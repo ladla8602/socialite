@@ -18,10 +18,13 @@ export class AuthService {
     async validateUser(loginInput: LoginInput): Promise<UserEntity | null> {
         try {
             const user = await this.userService.findOneByIdentity(loginInput.identity);
-
+            if (user && !user.is_active) {
+                throw new Error(AuthMessage.ACCOUNT_BLOCKED);
+            }
             if (user && await bcrypt.compare(loginInput.password, user.password)) {
                 return user;
             }
+
             throw new Error(AuthMessage.INVALID_CREDENTAILS);
         } catch (error) {
             this.logger.error(`Error validating user with identity: ${loginInput.identity}`, error);
@@ -43,6 +46,7 @@ export class AuthService {
             return {
                 access_token: accessToken,
                 refresh_token: refreshToken,
+                user: user,
             };
         } catch (error) {
             this.logger.error('Error during login', error);

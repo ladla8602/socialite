@@ -9,5 +9,14 @@ export class CreatePostInput {
     content: string;
 
     @Field({ nullable: true })
-    tags: string;
+    hashTags: string;
+}
+
+@InputType()
+export class CreateCommentInput {
+    @Field()
+    content: string;
+
+    @Field()
+    postId: string;
 }

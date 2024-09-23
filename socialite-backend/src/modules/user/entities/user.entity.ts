@@ -4,6 +4,9 @@ import { EntityRelationalHelper } from '../../../utils/relation-entity-helper';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index, Unique, BeforeInsert, BeforeUpdate, OneToMany, DeleteDateColumn } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { PostEntity } from '../../post/entities/post.entity';
+import { PostCommentEntity } from '../../../modules/post/entities/post_comment.entity';
+import { PostLikeEntity } from '../../../modules/post/entities/post_like.entity';
+import { UserFollowEntity } from './user_follow.entity';
 
 @ObjectType()
 @Entity({ name: 'users' })
@@ -74,14 +77,6 @@ export class UserEntity extends EntityRelationalHelper {
     block_user_ids?: string[];
 
     @Field(() => Int, { nullable: true })
-    @Column({ type: 'int', nullable: true })
-    following?: number;
-
-    @Field(() => Int, { nullable: true })
-    @Column({ type: 'int', nullable: true })
-    followers?: number;
-
-    @Field(() => Int, { nullable: true })
     @Column({ type: 'tinyint', nullable: true, comment: '0 = Google login, 1 = Apple Login, 2 = Email login, 3 = Phone login' })
     login_type?: number;
 
@@ -113,7 +108,23 @@ export class UserEntity extends EntityRelationalHelper {
     @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     updated_at: Date;
 
-    @Field(() => [PostEntity])  // Expose the posts array in GraphQL
-    @OneToMany(() => PostEntity, (post) => post.user)  // Relation to PostEntity
-    posts: PostEntity[];
+    @Field(() => [PostEntity], { nullable: true })
+    @OneToMany(() => PostEntity, (post) => post.user, { nullable: true })
+    posts?: PostEntity[];
+
+    @Field(() => [PostCommentEntity], { nullable: true })
+    @OneToMany(() => PostCommentEntity, comment => comment.user, { nullable: true })
+    comments?: PostCommentEntity[];
+
+    @Field(() => [PostLikeEntity], { nullable: true })
+    @OneToMany(() => PostLikeEntity, like => like.user, { nullable: true })
+    likes?: PostLikeEntity[];
+
+    @Field(() => [UserFollowEntity], { nullable: true })
+    @OneToMany(() => UserFollowEntity, (follow) => follow.follower, { nullable: true })
+    following_users?: UserFollowEntity[];
+
+    @Field(() => [UserFollowEntity], { nullable: true })
+    @OneToMany(() => UserFollowEntity, (follow) => follow.followed, { nullable: true })
+    followers_users?: UserFollowEntity[];
 }

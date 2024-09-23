@@ -1,0 +1,68 @@
+module.exports = {
+  root: true,
+  env: { browser: true, es2020: true },
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:react-hooks/recommended',
+    'plugin:prettier/recommended',
+    'plugin:import/errors',
+    'plugin:import/warnings',
+    'plugin:import/typescript',
+  ],
+  ignorePatterns: ['dist', '.eslintrc.cjs'],
+  parser: '@typescript-eslint/parser',
+  plugins: ['react-refresh', 'prettier', '@typescript-eslint', 'import'],
+  rules: {
+    'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+    'prettier/prettier': [
+      'error',
+      {
+        arrowParens: 'always',
+        bracketSpacing: true,
+        printWidth: 120,
+        jsxSingleQuote: true,
+        singleQuote: true,
+        trailingComma: 'all',
+        tabWidth: 2,
+        semi: true,
+      },
+    ],
+    'sort-imports': ['error', { ignoreDeclarationSort: true }],
+    'import/order': [
+      'error',
+      {
+        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
+        pathGroups: [
+          {
+            pattern: '@/**',
+            group: 'internal',
+            position: 'after',
+          },
+        ],
+        'newlines-between': 'always',
+        alphabetize: {
+          order: 'asc',
+          caseInsensitive: true,
+        },
+      },
+    ],
+    '@typescript-eslint/interface-name-prefix': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
+    'no-unused-vars': 'off',
+    'react-hooks/rules-of-hooks': 'off',
+    'react-hooks/exhaustive-deps': 'off',
+    'import/no-unresolved': 'off',
+    'import/named': 'off',
+    'import/namespace': 'off',
+    'import/default': 'off',
+    'import/export': 'off',
+    '@typescript-eslint/ban-types': 'off',
+  },
+};
+ 

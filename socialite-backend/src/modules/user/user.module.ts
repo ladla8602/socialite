@@ -9,10 +9,11 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { PubSub } from 'graphql-subscriptions';
+import { UserFollowEntity } from './entities/user_follow.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([UserEntity]),
+        TypeOrmModule.forFeature([UserEntity, UserFollowEntity]),
     ],
     controllers: [UserController],
     providers: [UserService, UserResolver, UserRepository, PubSub],

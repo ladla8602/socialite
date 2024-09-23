@@ -6,10 +6,10 @@ NODEJS Version: v20.17.0
 
 nest generate mo modules/post
 
-
 ## Migration Commands
 
 ### Generate from entity
+
 ```
 yarn migration:generate
 ```

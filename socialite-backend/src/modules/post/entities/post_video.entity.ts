@@ -1,5 +1,5 @@
 import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, Unique } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, Unique, JoinColumn } from 'typeorm';
 import { PostEntity } from './post.entity';
 
 @ObjectType()
@@ -10,14 +10,11 @@ export class PostVideoEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @OneToOne(() => PostEntity, (post) => post.postVideo)
-    post: PostEntity;
-
-    @Field()
-    @Column({ type: 'varchar', length: 100 })
-    mime_type: string;
-
     @Field()
     @Column({ type: 'varchar', length: 255 })
     media_url: string;
+
+    @OneToOne(() => PostEntity, (post) => post.postVideo)
+    @JoinColumn()
+    post?: PostEntity;
 }

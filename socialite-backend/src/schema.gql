@@ -1,9 +1,14 @@
 directive @upper on FIELD_DEFINITION
 
+input CreateCommentInput {
+  content: String!
+  postId: String!
+}
+
 input CreatePostInput {
   content: String!
   content_type: Float!
-  tags: String
+  hashTags: String
 }
 
 input CreateUserInput {
@@ -24,7 +29,7 @@ scalar DateTime
 
 input LoginInput {
   device_token: String
-  device_type: String
+  device_type: Float
   identity: String!
   password: String!
 }
@@ -32,67 +37,101 @@ input LoginInput {
 type LoginResponse {
   access_token: String!
   refresh_token: String!
+  user: UserEntity
 }
 
 type Mutation {
+  addPostComment(addPostComment: CreateCommentInput!): PostCommentEntity!
   createPost(createPostInput: CreatePostInput!): PostEntity!
   createUser(createUserInput: CreateUserInput!): UserEntity!
+  follow(followingId: String!): UserFollowEntity!
   login(loginInput: LoginInput!): LoginResponse!
   refreshToken(refreshToken: String!): LoginResponse!
+  unfollow(followingId: String!): String!
 }
 
-type PostContentEntity {
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+}
+
+type PaginatedPost {
+  edges: [PostEntity!]!
+  pageInfo: PageInfo!
+}
+
+type PostCommentEntity {
   content: String!
-  content_type: Int!
   created_at: DateTime!
   id: ID!
-  thumbnail: String
-  updated_at: DateTime!
 }
 
 type PostEntity {
-  comments_count: Int!
+  comments: [PostCommentEntity!]
+  content: String!
+  content_type: Int!
   created_at: DateTime!
   deleted_at: DateTime
-  desc: String
   id: ID!
-  likes_count: Int!
-  postContent: PostContentEntity
-  postImages: [PostImageEntity!]!
+  is_active: Boolean!
+  likes: [PostLikeEntity!]
+  postImages: [PostImageEntity!]
   postVideo: PostVideoEntity
-  tags: String
+  tags: [TagEntity!]
+  thumbnail: String
   updated_at: DateTime!
   user: UserEntity!
 }
 
 type PostImageEntity {
+  created_at: DateTime!
   id: ID!
   image_url: String!
-  post_id: String!
+  is_active: Boolean!
+}
+
+type PostLikeEntity {
+  created_at: DateTime!
+  id: ID!
+}
+
+type PostTagEntity {
+  post: PostEntity!
+  postId: String!
+  tag: TagEntity!
+  tagId: String!
 }
 
 type PostVideoEntity {
   id: ID!
   media_url: String!
-  mime_type: String!
-  post_id: String!
 }
 
 type Query {
+  getPosts(after: String, first: Int! = 10): PaginatedPost!
   hello: String!
   users: [UserEntity!]!
+}
+
+type TagEntity {
+  id: ID!
+  name: String!
+  postTags: [PostTagEntity!]
 }
 
 type UserEntity {
   background_image: String
   bio: String
   block_user_ids: [String!]
+  comments: [PostCommentEntity!]
   created_at: DateTime!
   deleted_at: DateTime
   device_token: String
   device_type: Int!
-  followers: Int
-  following: Int
+  followers_users: [UserFollowEntity!]
+  following_users: [UserFollowEntity!]
   full_name: String
   id: ID!
   identity: String!
@@ -102,10 +141,18 @@ type UserEntity {
   is_push_notifications: Int!
   is_verified: Int!
   latitude: Float
+  likes: [PostLikeEntity!]
   login_type: Int
   longitude: Float
-  posts: [PostEntity!]!
+  posts: [PostEntity!]
   profile: String
   updated_at: DateTime!
   username: String!
+}
+
+type UserFollowEntity {
+  created_at: DateTime!
+  followed: UserEntity!
+  follower: UserEntity!
+  id: ID!
 }

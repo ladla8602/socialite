@@ -8,6 +8,7 @@ import { UserService } from '../user/user.service';
 import { UserModule } from '../user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PubSub } from 'graphql-subscriptions';
+import { OpenAiService } from 'src/common/services/openai.service';
 
 @Module({
   imports: [
@@ -22,6 +23,6 @@ import { PubSub } from 'graphql-subscriptions';
     }),
     UserModule,
   ],
-  providers: [AuthService, JwtStrategy, AuthResolver, PubSub]
+  providers: [AuthService, JwtStrategy, AuthResolver, PubSub, OpenAiService]
 })
 export class AuthModule { }
