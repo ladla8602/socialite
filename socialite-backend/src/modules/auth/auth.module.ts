@@ -9,6 +9,7 @@ import { UserModule } from '../user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PubSub } from 'graphql-subscriptions';
 import { OpenAiService } from 'src/common/services/openai.service';
+import { OAuth2Client } from 'google-auth-library';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { OpenAiService } from 'src/common/services/openai.service';
       }),
     }),
     UserModule,
+    OAuth2Client,
   ],
-  providers: [AuthService, JwtStrategy, AuthResolver, PubSub, OpenAiService]
+  providers: [AuthService, JwtStrategy, AuthResolver, PubSub, OpenAiService, OAuth2Client]
 })
 export class AuthModule { }

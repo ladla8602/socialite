@@ -86,6 +86,10 @@ export class UserEntity extends EntityRelationalHelper {
 
     @Field({ nullable: true })
     @Column({ type: 'varchar', length: 255, nullable: true })
+    google_id?: string;
+
+    @Field({ nullable: true })
+    @Column({ type: 'varchar', length: 255, nullable: true })
     device_token?: string;
 
     @Field(() => Float, { nullable: true })
@@ -127,4 +131,10 @@ export class UserEntity extends EntityRelationalHelper {
     @Field(() => [UserFollowEntity], { nullable: true })
     @OneToMany(() => UserFollowEntity, (follow) => follow.followed, { nullable: true })
     followers_users?: UserFollowEntity[];
+
+    @Field(() => Int, { defaultValue: 0 })
+    followedCount: number;
+
+    @Field(() => Int, { defaultValue: 0 })
+    followerCount: number;
 }

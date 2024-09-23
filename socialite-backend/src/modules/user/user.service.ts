@@ -4,12 +4,17 @@ import { CreateUserInput } from '../auth/dto/create-user.input';
 import { UserRepository } from './user.repository';
 import { UserMessage } from './constants/user.message';
 import { UserFollowEntity } from './entities/user_follow.entity';
+import { PaginatedUser } from './dto/user.response.dto';
 
 @Injectable()
 export class UserService {
     constructor(
         private readonly userRepository: UserRepository,
     ) { }
+
+    async findByGoogleId(googleId: string) {
+        return this.userRepository.findOneByGoogleId(googleId);
+    }
 
     async findOneByIdentity(identity: string): Promise<UserEntity> {
         try {
@@ -41,13 +46,13 @@ export class UserService {
         }
     }
 
-    async findOneByEmail(email: string): Promise<Boolean> {
+    async findOneByEmail(email: string): Promise<UserEntity> {
         try {
             const user = await this.userRepository.findOneByEmail(email);
             if (user) {
-                return true;
+                return user;
             }
-            return false;
+            throw null;
         } catch (error: unknown) {
             throw null;
         }
@@ -114,13 +119,50 @@ export class UserService {
             if (!existingFollow) {
                 throw new Error(UserMessage.NOT_FOLLOWING);
             }
-            console.log(existingFollow)
             // Remove the follow relationship
             const result = await this.userRepository.removeFollowUser(existingFollow);
             if (result) {
                 return UserMessage.UNFOLLOW_SUCCESS;
             }
             throw new Error(UserMessage.SOMETHING_WENT_WRONG);
+        } catch (error: unknown) {
+            throw error;
+        }
+    }
+
+    async countFollowedByUser(userId: string): Promise<number> {
+        try {
+            return await this.userRepository.countFollowedByUser(userId);
+        } catch (error: unknown) {
+            throw error;
+        }
+    }
+
+    async countFollowerByUser(userId: string): Promise<number> {
+        try {
+            return await this.userRepository.countFollowerByUser(userId);
+        } catch (error: unknown) {
+            throw error;
+        }
+    }
+
+    async followedByUser(userId: string, first: number, after?: string): Promise<PaginatedUser> {
+        try {
+
+            let posts = await this.userRepository.followedByUser(userId, first, after);
+
+            const edges = posts.slice(0, first);
+            const hasNextPage = posts.length > first;
+
+            return {
+                edges,
+                pageInfo: {
+                    hasNextPage,
+                    hasPreviousPage: !!after,
+                    startCursor: edges.length ? edges[0].id : null,
+                    endCursor: edges.length ? edges[edges.length - 1].id : null,
+                },
+            };
         } catch (error: unknown) {
             throw error;
         }
