@@ -106,12 +106,18 @@ export class AuthResolver {
 
     @Mutation(() => LoginResponse, { nullable: true })
     async googleLogin(@Args('googleToken') googleToken: string) {
-        const userData = await this.authService.verifyGoogleToken(googleToken);
+        try {
+            const userData = await this.authService.verifyGoogleToken(googleToken);
 
-        if (!userData) {
-            return null;  // Return null if no user is found
+            if (!userData) {
+                return null;  // Return null if no user is found
+            }
+
+            return userData;  // Return JWT token if user exists
+        } catch (error) {
+            this.logger.error('Error during googleLogin mutation', error);
+            throw error;
         }
 
-        return userData;  // Return JWT token if user exists
     }
 }

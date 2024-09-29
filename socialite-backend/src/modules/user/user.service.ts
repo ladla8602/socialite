@@ -47,15 +47,8 @@ export class UserService {
     }
 
     async findOneByEmail(email: string): Promise<UserEntity> {
-        try {
-            const user = await this.userRepository.findOneByEmail(email);
-            if (user) {
-                return user;
-            }
-            throw null;
-        } catch (error: unknown) {
-            throw null;
-        }
+        const user = await this.userRepository.findOneByEmail(email);
+        return user;
     }
 
     // Create a new user

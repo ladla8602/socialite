@@ -84,15 +84,17 @@ export class AuthService {
         }
     }
 
-    async validateUserForGoogleLogin(googleId: string, email: string) {
-        const user = await this.userService.findByGoogleId(googleId);
+    async validateUserForGoogleLogin(googleId: string, email: string): Promise<LoginResponse> {
+        let user = await this.userService.findByGoogleId(googleId);
 
         if (!user) {
-            return null;  // Return null if the user doesn't exist
+            user = await this.userService.findOneByEmail(email);
+            if (!user) {
+                return null;
+            }
         }
 
         const result = await this.generateToken(user);
-
         return result;
     }
 
@@ -104,7 +106,6 @@ export class AuthService {
         const payload = ticket.getPayload();
         const googleId = payload.sub;
         const email = payload.email;
-
         return this.validateUserForGoogleLogin(googleId, email);
     }
 }
