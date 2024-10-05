@@ -6,6 +6,7 @@ import { LoginInput, LoginResponse } from './dto/login.input';
 import { UserEntity } from '../user/entities/user.entity';
 import { PinoLogger } from 'nestjs-pino';
 import { AuthMessage } from './constants/auth.message';
+import { OAuth2Client } from 'google-auth-library';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +14,10 @@ export class AuthService {
         private readonly userService: UserService,
         private readonly jwtService: JwtService,
         private readonly logger: PinoLogger,
-    ) { }
+        private readonly client: OAuth2Client,
+    ) {
+        client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+    }
 
     async validateUser(loginInput: LoginInput): Promise<UserEntity | null> {
         try {
@@ -32,22 +36,26 @@ export class AuthService {
         }
     }
 
+    async generateToken(user: UserEntity): Promise<any> {
+        const payload = { identity: user.identity, sub: user.id };
+        const accessToken = this.jwtService.sign(payload, {
+            expiresIn: process.env.JWT_ACCESS_TOKEN_EXP,  // Short-lived access token
+        });
+
+        const refreshToken = this.jwtService.sign(payload, {
+            expiresIn: process.env.JWT_REFRESH_TOKEN_EXP,  // Long-lived refresh token
+        });
+        return {
+            access_token: accessToken,
+            refresh_token: refreshToken,
+            user: user,
+        };
+    }
+
     async login(user: UserEntity): Promise<LoginResponse> {
         try {
-            const payload = { identity: user.identity, sub: user.id };
-            const accessToken = this.jwtService.sign(payload, {
-                expiresIn: process.env.JWT_ACCESS_TOKEN_EXP,  // Short-lived access token
-            });
-
-            const refreshToken = this.jwtService.sign(payload, {
-                expiresIn: process.env.JWT_REFRESH_TOKEN_EXP,  // Long-lived refresh token
-            });
-
-            return {
-                access_token: accessToken,
-                refresh_token: refreshToken,
-                user: user,
-            };
+            const result = await this.generateToken(user);
+            return result;
         } catch (error) {
             this.logger.error('Error during login', error);
             throw new Error('Login failed');
@@ -74,5 +82,30 @@ export class AuthService {
         } catch (e) {
             throw e;
         }
+    }
+
+    async validateUserForGoogleLogin(googleId: string, email: string): Promise<LoginResponse> {
+        let user = await this.userService.findByGoogleId(googleId);
+
+        if (!user) {
+            user = await this.userService.findOneByEmail(email);
+            if (!user) {
+                return null;
+            }
+        }
+
+        const result = await this.generateToken(user);
+        return result;
+    }
+
+    async verifyGoogleToken(token: string) {
+        const ticket = await this.client.verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        const payload = ticket.getPayload();
+        const googleId = payload.sub;
+        const email = payload.email;
+        return this.validateUserForGoogleLogin(googleId, email);
     }
 }

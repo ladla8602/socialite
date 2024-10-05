@@ -1,8 +1,8 @@
-import { InputType, Field, ObjectType } from '@nestjs/graphql';
+import { InputType, Field, ObjectType, Int } from '@nestjs/graphql';
 
 @InputType()
 export class CreatePostInput {
-    @Field()
+    @Field(() => Int)
     content_type: number;
 
     @Field()

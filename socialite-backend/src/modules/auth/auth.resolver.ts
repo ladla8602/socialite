@@ -93,10 +93,31 @@ export class AuthResolver {
     ) {
         const { email } = checkEmailInput;
         try {
-            return await this.userService.findOneByEmail(email);
+            const user = await this.userService.findOneByEmail(email);
+            if (user) {
+                return true;
+            }
+            return false;
         } catch (error) {
             this.logger.error('Error during checkEmailExists query', error);
             throw error;
         }
+    }
+
+    @Mutation(() => LoginResponse, { nullable: true })
+    async googleLogin(@Args('googleToken') googleToken: string) {
+        try {
+            const userData = await this.authService.verifyGoogleToken(googleToken);
+
+            if (!userData) {
+                return null;  // Return null if no user is found
+            }
+
+            return userData;  // Return JWT token if user exists
+        } catch (error) {
+            this.logger.error('Error during googleLogin mutation', error);
+            throw error;
+        }
+
     }
 }

@@ -1,4 +1,4 @@
-import { DeleteResult, FindOptionsWhere, Repository } from 'typeorm';
+import { DeleteResult, FindOptionsWhere, MoreThan, Repository } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -60,6 +60,11 @@ export class UserRepository extends BaseRepository<UserEntity> {
         }
     }
 
+    async findOneByGoogleId(googleId: string): Promise<UserEntity | undefined> {
+        this.logger.info(`Fetching user with googleId: ${googleId}`);
+        return await this.userRepository.findOne({ where: { google_id: googleId } });
+    }
+
     async findOneByUsername(username: string): Promise<UserEntity | undefined> {
         this.logger.info(`Fetching user with username: ${username}`);
         return await this.userRepository.findOne({ where: { username: username } });
@@ -73,6 +78,22 @@ export class UserRepository extends BaseRepository<UserEntity> {
     async create(userData: Partial<UserEntity>): Promise<UserEntity> {
         const user = this.userRepository.create(userData);
         return this.userRepository.save(user);
+    }
+
+    async countFollowedByUser(userId: string): Promise<number> {
+        const count = await this.userFollowRepository.count({
+            where: { follower: { id: userId } }, // Filter by the follower's userId
+        });
+
+        return count;
+    }
+
+    async countFollowerByUser(userId: string): Promise<number> {
+        const count = await this.userFollowRepository.count({
+            where: { followed: { id: userId } }, // Filter by the follower's userId
+        });
+
+        return count;
     }
 
     async checkFollowUser(followerId: string, followingId: string): Promise<UserFollowEntity | null> {
@@ -94,5 +115,25 @@ export class UserRepository extends BaseRepository<UserEntity> {
     async removeFollowUser(userData: UserFollowEntity): Promise<UserFollowEntity> {
         const result = this.userFollowRepository.remove(userData);
         return result;
+    }
+
+    async followedByUser(userId: string, first: number, after?: string): Promise<UserEntity[]> {
+        const whereCondition: any = {
+            followers_users: { follower: { id: userId } }, // Filter by the userId in the follower relation
+            is_active: true, // Only get active users
+        };
+
+        if (after) {
+            whereCondition.id = MoreThan(after);
+        }
+
+        // Fetch followers
+        const users = await this.userRepository.find({
+            where: whereCondition,
+            take: first + 1, // Take one extra to check if there's more for pagination
+            relations: ['followers_users'], // Load the followers_users relation
+        });
+
+        return users;
     }
 }

@@ -14,6 +14,9 @@ export class CreateUserInput {
     @Field()
     username: string;
 
+    @Field({ nullable: true })
+    google_id: string;
+
     @Field(() => Int)
     device_type: number;
 
