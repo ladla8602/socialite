@@ -55,9 +55,27 @@ export class PostService {
 
     async findPostsByUser(userId: string, first: number, after?: string): Promise<PaginatedPost> {
         try {
+            let posts = await this.postRepository.findPostsByUser(userId, first, after)
+            const edges = posts.slice(0, first);
+            const hasNextPage = posts.length > first;
 
-            let posts = await this.postRepository.findPostsByUser(userId, first, after);
+            return {
+                edges,
+                pageInfo: {
+                    hasNextPage,
+                    hasPreviousPage: !!after,
+                    startCursor: edges.length ? edges[0].id : null,
+                    endCursor: edges.length ? edges[edges.length - 1].id : null,
+                },
+            };
+        } catch (error: unknown) {
+            throw error;
+        }
+    }
 
+    async findPosts(category: string, userId: string, first: number, after?: string): Promise<PaginatedPost> {
+        try {
+            let posts = await this.postRepository.findPostsByCategory(category, userId, first, after)
             const edges = posts.slice(0, first);
             const hasNextPage = posts.length > first;
 

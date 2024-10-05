@@ -22,7 +22,7 @@ export class PostEntity {
     user: UserEntity;
 
     @Field(() => Boolean)
-    @Column({ type: 'boolean', default: false })
+    @Column({ type: 'boolean', default: true })
     is_active?: boolean;
 
     @Field(() => Int)
@@ -63,7 +63,6 @@ export class PostEntity {
     @OneToMany(() => PostCommentEntity, comment => comment.post)
     comments?: PostCommentEntity[];
 
-    @Field(() => [PostLikeEntity], { nullable: true })
     @OneToMany(() => PostLikeEntity, like => like.post)
     likes?: PostLikeEntity[];
 
@@ -72,4 +71,7 @@ export class PostEntity {
 
     @Field(() => Int, { defaultValue: 0 })
     commentsCount: number;
+
+    @Field(() => Int, { defaultValue: 0 })
+    likesCount: number;
 }
