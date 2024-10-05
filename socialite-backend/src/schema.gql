@@ -1,5 +1,13 @@
 directive @upper on FIELD_DEFINITION
 
+input CheckEmailInput {
+  email: String!
+}
+
+input CheckUsernameInput {
+  username: String!
+}
+
 input CreateCommentInput {
   content: String!
   postId: String!
@@ -15,6 +23,7 @@ input CreateUserInput {
   device_token: String
   device_type: Int!
   full_name: String!
+  google_id: String
   identity: String!
   latitude: Float
   longitude: Float
@@ -43,8 +52,9 @@ type LoginResponse {
 type Mutation {
   addPostComment(addPostComment: CreateCommentInput!): PostCommentEntity!
   createPost(createPostInput: CreatePostInput!): PostEntity!
-  createUser(createUserInput: CreateUserInput!): UserEntity!
+  createUser(createUserInput: CreateUserInput!): LoginResponse!
   follow(followingId: String!): UserFollowEntity!
+  googleLogin(googleToken: String!): LoginResponse
   login(loginInput: LoginInput!): LoginResponse!
   refreshToken(refreshToken: String!): LoginResponse!
   unfollow(followingId: String!): String!
@@ -62,6 +72,11 @@ type PaginatedPost {
   pageInfo: PageInfo!
 }
 
+type PaginatedUser {
+  edges: [UserEntity!]!
+  pageInfo: PageInfo!
+}
+
 type PostCommentEntity {
   content: String!
   created_at: DateTime!
@@ -69,7 +84,7 @@ type PostCommentEntity {
 }
 
 type PostEntity {
-  comments: [PostCommentEntity!]
+  commentsCount: Int!
   content: String!
   content_type: Int!
   created_at: DateTime!
@@ -87,6 +102,7 @@ type PostEntity {
 
 type PostImageEntity {
   created_at: DateTime!
+  fullImageUrl: String!
   id: ID!
   image_url: String!
   is_active: Boolean!
@@ -110,9 +126,18 @@ type PostVideoEntity {
 }
 
 type Query {
-  getPosts(after: String, first: Int! = 10): PaginatedPost!
+  checkEmailExists(checkEmailInput: CheckEmailInput!): Boolean!
+  checkUsernameExists(checkUsernameInput: CheckUsernameInput!): Boolean!
+  followed(after: String, first: Int! = 10): PaginatedUser!
+  getUserPosts(after: String, first: Int! = 10): PaginatedPost!
   hello: String!
-  users: [UserEntity!]!
+  profile: UserEntity!
+  suggestUsername(suggestUsernameInput: SuggestUsernameInput!): String!
+}
+
+input SuggestUsernameInput {
+  email: String!
+  name: String!
 }
 
 type TagEntity {
@@ -130,9 +155,12 @@ type UserEntity {
   deleted_at: DateTime
   device_token: String
   device_type: Int!
+  followedCount: Int!
+  followerCount: Int!
   followers_users: [UserFollowEntity!]
   following_users: [UserFollowEntity!]
   full_name: String
+  google_id: String
   id: ID!
   identity: String!
   is_active: Boolean!
