@@ -15,7 +15,7 @@ input CreateCommentInput {
 
 input CreatePostInput {
   content: String!
-  content_type: Float!
+  content_type: Int!
   hashTags: String
 }
 
@@ -55,6 +55,7 @@ type Mutation {
   createUser(createUserInput: CreateUserInput!): LoginResponse!
   follow(followingId: String!): UserFollowEntity!
   googleLogin(googleToken: String!): LoginResponse
+  likePost(postId: String!): PostLikeEntity!
   login(loginInput: LoginInput!): LoginResponse!
   refreshToken(refreshToken: String!): LoginResponse!
   unfollow(followingId: String!): String!
@@ -91,7 +92,7 @@ type PostEntity {
   deleted_at: DateTime
   id: ID!
   is_active: Boolean!
-  likes: [PostLikeEntity!]
+  likesCount: Int!
   postImages: [PostImageEntity!]
   postVideo: PostVideoEntity
   tags: [TagEntity!]
@@ -129,6 +130,7 @@ type Query {
   checkEmailExists(checkEmailInput: CheckEmailInput!): Boolean!
   checkUsernameExists(checkUsernameInput: CheckUsernameInput!): Boolean!
   followed(after: String, first: Int! = 10): PaginatedUser!
+  getPosts(after: String, category: String!, first: Int! = 10): PaginatedPost!
   getUserPosts(after: String, first: Int! = 10): PaginatedPost!
   hello: String!
   profile: UserEntity!

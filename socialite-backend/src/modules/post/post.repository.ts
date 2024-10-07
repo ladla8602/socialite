@@ -26,6 +26,8 @@ export class PostRepository extends BaseRepository<PostEntity> {
         private readonly commentRepository: Repository<PostCommentEntity>,
         @InjectRepository(PostImageEntity)
         private readonly postImageRepository: Repository<PostImageEntity>,
+        @InjectRepository(PostLikeEntity)
+        private readonly postLikeRepository: Repository<PostLikeEntity>,
         private readonly logger: PinoLogger,
     ) {
         super(postRepository);
@@ -35,7 +37,7 @@ export class PostRepository extends BaseRepository<PostEntity> {
         await this.tagRepository.upsert(postData, ['name']);
         // Fetch the saved tags from the database
         const tags = await this.tagRepository.findBy({
-            name: In(postData.map(data => data.name)), // Use the appropriate unique field
+            name: In(postData.map(data => data.name)),
         });
         return tags;
     }
@@ -44,12 +46,16 @@ export class PostRepository extends BaseRepository<PostEntity> {
         this.postTagsRepository.insert(postData);
     }
 
+
     async commentsCount(postId: string): Promise<number> {
         const count = await this.commentRepository.count({ where: { post: { id: postId } } });
         console.log(count)
         return count;
     }
-
+    async LikesCount(postId: string,): Promise<number> {
+        const count = await this.postLikeRepository.count({ where: { post: { id: postId } } });
+        return count;
+    }
     buildPostQueryBeforeWhere(): SelectQueryBuilder<PostEntity> {
         return this.postRepository.createQueryBuilder('posts')
             .leftJoinAndSelect('posts.user', 'user')
@@ -154,5 +160,28 @@ export class PostRepository extends BaseRepository<PostEntity> {
         const post = this.commentRepository.create(commentPayload);
         return this.commentRepository.save(post);
     }
+
+
+    async likePost(postId: string, userId: string): Promise<PostLikeEntity> {
+        const newLike = this.postLikeRepository.create({ post: { id: postId }, user: { id: userId } });
+        return await this.postLikeRepository.save(newLike);
+    }
+
+
+    async unlikePost(postId: string, userId: string): Promise<PostLikeEntity> {
+        const existingLike = await this.findLikeByPostAndUser(postId, userId);
+        if (existingLike) {
+            await this.postLikeRepository.delete(existingLike.id);
+            return existingLike;
+        }
+        throw new Error('Like not found');
+    }
+
+
+    async findLikeByPostAndUser(postId: string, userId: string): Promise<PostLikeEntity | null> {
+        return await this.postLikeRepository.findOne({ where: { post: { id: postId }, user: { id: userId } } });
+    }
+
+
 
 }

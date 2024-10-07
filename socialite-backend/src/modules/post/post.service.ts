@@ -15,6 +15,7 @@ export class PostService {
     constructor(
         private readonly userRepository: UserRepository,
         private readonly postRepository: PostRepository,
+
     ) { }
 
     // Create a new user
@@ -91,7 +92,10 @@ export class PostService {
         } catch (error: unknown) {
             throw error;
         }
+
     }
+   
+
 
     async savePostImage(postId: string, image_url: string, status: boolean) {
         const post = await this.postRepository.findOne(postId);

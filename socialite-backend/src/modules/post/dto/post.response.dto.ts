@@ -9,4 +9,5 @@ export class PaginatedPost {
 
     @Field(() => PageInfo)
     pageInfo: PageInfo;
+
 }
