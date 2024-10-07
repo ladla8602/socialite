@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PinoLogger } from "nestjs-pino";
 import { PostEntity } from "./entities/post.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { In, Repository } from "typeorm";
+import { In, QueryBuilder, Repository, SelectQueryBuilder } from "typeorm";
 import { TagEntity } from "./entities/tag.entity";
 import { PostTagEntity } from "./entities/post_tag.entity";
 import { PostImageEntity } from "./entities/post_image.entity";
@@ -10,6 +10,8 @@ import { BaseRepository } from "src/common/base.repository";
 import { PageInfo } from "./../../common/dto/pagination.dto";
 import { PostCommentEntity } from "./entities/post_comment.entity";
 import { Parent } from "@nestjs/graphql";
+import { PostCategory } from "./constants/post.constants";
+import { PostLikeEntity } from "./entities/post_like.entity";
 
 @Injectable()
 export class PostRepository extends BaseRepository<PostEntity> {
@@ -48,8 +50,9 @@ export class PostRepository extends BaseRepository<PostEntity> {
         return count;
     }
 
-    async findPostsByUser(userId: string, first: number, after?: string): Promise<PostEntity[]> {
-        const query = this.postRepository.createQueryBuilder('posts')
+    buildPostQueryBeforeWhere(): SelectQueryBuilder<PostEntity> {
+        return this.postRepository.createQueryBuilder('posts')
+            .leftJoinAndSelect('posts.user', 'user')
             .leftJoin('posts.postTags', 'postTags')
             .leftJoin('postTags.tag', 'tag')
             .addSelect(['tag.id', 'tag.name'])
@@ -60,9 +63,59 @@ export class PostRepository extends BaseRepository<PostEntity> {
                     .from(PostCommentEntity, 'comments')
                     .where('comments.postId = posts.id');
             }, 'commentsCount')
-            .where('posts.userId = :userId', { userId: userId })
-            .andWhere('posts.is_active = true');
+            .addSelect(subQuery => {
+                return subQuery
+                    .select('COUNT(likes.id)', 'likesCount')
+                    .from(PostLikeEntity, 'likes')
+                    .where('likes.postId = posts.id');
+            }, 'likesCount');
+    }
 
+    async findPostsByUser(userId: string, first: number, after?: string): Promise<PostEntity[]> {
+        let query = this.buildPostQueryBeforeWhere();
+        query = query
+            .where('posts.userId = :userId', { userId })
+            .andWhere('posts.is_active = true');
+        if (after) {
+            query.where('posts.id > :after', { after });
+        }
+
+        // Fetch posts and comments count
+        const results = await query.take(first + 1).getRawAndEntities();
+
+        const posts = results.entities as PostEntity[];
+        const rawResults = results.raw as any[];
+        // Map comments count to posts
+        const commentsCountMap = new Map<string, number>(
+            rawResults.map(result => [result.posts_id, parseInt(result.commentsCount, 10)])
+        );
+
+        posts.forEach(post => {
+            post.commentsCount = commentsCountMap.get(post.id) || 0;
+            post.tags = rawResults
+                .filter(result => result.tag_id && result.tag_name)
+                .map(result => ({
+                    id: result.tag_id,
+                    name: result.tag_name
+                }));
+        });
+        return posts;
+    }
+
+    async findPostsByCategory(category: string, userId: string, first: number, after?: string): Promise<PostEntity[]> {
+        let query = this.buildPostQueryBeforeWhere();
+        query = query
+            .where('posts.is_active = true');
+        switch (category) {
+            case PostCategory.RECENT:
+                query = query.orderBy('posts.created_at', 'DESC');
+                break;
+            case PostCategory.TOP:
+                query = query.orderBy('likesCount', 'DESC');
+                break;
+            default:
+                break;
+        }
         if (after) {
             query.where('posts.id > :after', { after });
         }

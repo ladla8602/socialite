@@ -43,6 +43,23 @@ export class PostResolver {
             const userId = context.req.user.id;
             return await this.postService.findPostsByUser(userId, first, after);
         } catch (error) {
+            this.logger.error('Error during getUserPosts mutation', error);
+            throw error;
+        }
+    }
+
+    @Query(() => PaginatedPost)
+    @UseGuards(JwtAuthGuard)
+    async getPosts(
+        @Args() paginationArgs: PaginationArgs,
+        @Args('category', { type: () => String }) category: string,
+        @Context() context: any,
+    ) {
+        const { first, after } = paginationArgs;
+        try {
+            const userId = context.req.user.id;
+            return await this.postService.findPosts(category, userId, first, after);
+        } catch (error) {
             this.logger.error('Error during getPosts mutation', error);
             throw error;
         }
