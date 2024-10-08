@@ -52,10 +52,10 @@ export class PostRepository extends BaseRepository<PostEntity> {
         console.log(count)
         return count;
     }
-    async LikesCount(postId: string,): Promise<number> {
-        const count = await this.postLikeRepository.count({ where: { post: { id: postId } } });
-        return count;
-    }
+    // async LikesCount(postId: string,): Promise<number> {
+    //     const count = await this.postLikeRepository.count({ where: { post: { id: postId } } });
+    //     return count;
+    // }
     buildPostQueryBeforeWhere(): SelectQueryBuilder<PostEntity> {
         return this.postRepository.createQueryBuilder('posts')
             .leftJoinAndSelect('posts.user', 'user')
@@ -157,9 +157,10 @@ export class PostRepository extends BaseRepository<PostEntity> {
     }
 
     async createComment(commentPayload: Partial<PostCommentEntity>): Promise<PostCommentEntity> {
-        const post = this.commentRepository.create(commentPayload);
-        return this.commentRepository.save(post);
+        const comment = this.commentRepository.create(commentPayload);
+        return await this.commentRepository.save(comment);
     }
+
 
 
     async likePost(postId: string, userId: string): Promise<PostLikeEntity> {

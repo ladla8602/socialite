@@ -72,6 +72,6 @@ export class PostEntity {
     @Field(() => Int, { defaultValue: 0 })
     commentsCount: number;
 
-    @Field(() => Int,)
+    @Field(() => Int, { defaultValue: 0 })
     likesCount: number;
 }

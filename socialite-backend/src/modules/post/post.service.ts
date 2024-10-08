@@ -9,6 +9,7 @@ import { PostTagEntity } from "./entities/post_tag.entity";
 import { PostImageEntity } from "./entities/post_image.entity";
 import { PostCommentEntity } from "./entities/post_comment.entity";
 import { PaginatedPost } from "./dto/post.response.dto";
+import { log } from "console";
 
 @Injectable()
 export class PostService {
@@ -94,7 +95,7 @@ export class PostService {
         }
 
     }
-   
+
 
 
     async savePostImage(postId: string, image_url: string, status: boolean) {
@@ -111,7 +112,7 @@ export class PostService {
             this.postRepository.insetPostImage(postImage);
         }
     }
-    async addPostComment(createCommentInput: CreateCommentInput, userId: string): Promise<PostEntity> {
+    async addPostComment(createCommentInput: CreateCommentInput, userId: string): Promise<PostCommentEntity> {
         try {
             // Find the user who is adding the comment
             const user = await this.userRepository.findOne(userId);
@@ -131,13 +132,14 @@ export class PostService {
             const commentPayload: Partial<PostCommentEntity> = {
                 content: createCommentInput.content,
                 user: user,
-                post: post, // Link the comment to the found post
+                post: post,
             };
 
             // Save the comment to the repository
             const comment = await this.postRepository.createComment(commentPayload);
+            log(comment);
             if (comment) {
-                return post;
+                return comment;
             }
 
             throw new Error(PostMessage.COMMENT_FAILED);
