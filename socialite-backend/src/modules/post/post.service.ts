@@ -10,12 +10,16 @@ import { PostImageEntity } from "./entities/post_image.entity";
 import { PostCommentEntity } from "./entities/post_comment.entity";
 import { PaginatedPost } from "./dto/post.response.dto";
 import { log } from "console";
+import { Repository } from "typeorm/repository/Repository";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
 export class PostService {
     constructor(
         private readonly userRepository: UserRepository,
         private readonly postRepository: PostRepository,
+        @InjectRepository(PostCommentEntity)
+        private readonly commentRepository: Repository<PostCommentEntity>,
 
     ) { }
 
@@ -146,6 +150,14 @@ export class PostService {
         } catch (error: unknown) {
             throw error;
         }
+    }
+
+    async getCommentsByPost(postId: string): Promise<PostCommentEntity[]> {
+        return this.commentRepository.find({
+            where: { post: { id: postId } },
+            relations: ['user'],
+            order: { created_at: 'DESC' },
+        });
     }
 
 

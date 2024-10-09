@@ -130,6 +130,7 @@ type Query {
   checkEmailExists(checkEmailInput: CheckEmailInput!): Boolean!
   checkUsernameExists(checkUsernameInput: CheckUsernameInput!): Boolean!
   followed(after: String, first: Int! = 10): PaginatedUser!
+  getCommentsByPost(postId: String!): [PostCommentEntity!]!
   getPosts(after: String, category: String!, first: Int! = 10): PaginatedPost!
   getUserPosts(after: String, first: Int! = 10): PaginatedPost!
   hello: String!

@@ -84,6 +84,17 @@ export class PostResolver {
             throw error;
         }
     }
+
+    //comment listing
+    @Query(() => [PostCommentEntity])
+    @UseGuards(JwtAuthGuard)
+    async getCommentsByPost(@Args('postId') postId: string) {
+        return this.postService.getCommentsByPost(postId);
+    }
+
+
+
+
     ///post like////
     @Mutation(() => PostLikeEntity)
     @UseGuards(JwtAuthGuard)
