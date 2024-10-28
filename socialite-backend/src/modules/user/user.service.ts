@@ -5,11 +5,14 @@ import { UserRepository } from './user.repository';
 import { UserMessage } from './constants/user.message';
 import { UserFollowEntity } from './entities/user_follow.entity';
 import { PaginatedUser } from './dto/user.response.dto';
+import { Admin, DeepPartial } from 'typeorm';
+import { use } from 'passport';
 
 @Injectable()
 export class UserService {
     constructor(
         private readonly userRepository: UserRepository,
+
     ) { }
 
     async findByGoogleId(googleId: string) {
@@ -33,7 +36,9 @@ export class UserService {
             throw null;
         }
     }
-
+    async save(user: UserEntity): Promise<UserEntity> {
+        return await this.userRepository.save(user);
+    }
     async findOneByUsername(username: string): Promise<Boolean> {
         try {
             const user = await this.userRepository.findOneByUsername(username);

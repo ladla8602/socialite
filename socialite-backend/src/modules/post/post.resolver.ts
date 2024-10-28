@@ -28,9 +28,10 @@ export class PostResolver {
     ) {
         try {
             const userId = context.req.user.id;
+
             return this.postService.create(createPostInput, userId);
         } catch (error) {
-            // Handle and log the error appropriately
+
             this.logger.error('Error during createPost mutation', error);
             throw error;
         }

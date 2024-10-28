@@ -10,6 +10,10 @@ export class CreatePostInput {
 
     @Field({ nullable: true })
     hashTags: string;
+
+    @Field({ nullable: true })
+    visibility: string;
+
 }
 
 @InputType()

@@ -136,4 +136,9 @@ export class UserRepository extends BaseRepository<UserEntity> {
 
         return users;
     }
+    async save(user: UserEntity): Promise<UserEntity> {
+        this.logger.info(`Saving user with id: ${user.id}`);
+        return await this.userRepository.save(user);
+    }
+
 }

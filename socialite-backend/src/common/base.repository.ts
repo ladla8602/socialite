@@ -41,7 +41,6 @@ export class BaseRepository<Entity> {
             take,
         });
     }
-
     async softDelete(id: number): Promise<void> {
         await this.repository.softDelete(id);
     }

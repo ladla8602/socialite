@@ -4,14 +4,16 @@ import { UserService } from './user.service';
 import { CreateUserInput } from '../auth/dto/create-user.input';
 import { PubSub } from 'graphql-subscriptions';
 import { JwtAuthGuard } from '../auth/jwt.guard';
-import { UseGuards } from '@nestjs/common';
+import { ForbiddenException, NotFoundException, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { PinoLogger } from 'nestjs-pino';
 import { UserFollowEntity } from './entities/user_follow.entity';
 import { PaginatedUser } from './dto/user.response.dto';
 import { PaginationArgs } from 'src/common/dto/pagination-args.dto';
+import { UserUpdateDto } from './dto/profile update.dto';
 
 @Resolver(() => UserEntity)
 export class UserResolver {
+    authService: any;
     constructor(
         private readonly userService: UserService,
         private readonly logger: PinoLogger,
@@ -69,6 +71,35 @@ export class UserResolver {
             throw error;
         }
     }
+
+    @Query(() => UserEntity)
+    @UseGuards(JwtAuthGuard)
+    async updateUserProfile(
+        @Context() context: any,
+        @Args('userId') userId: string,
+        @Args('data') updateData: UserUpdateDto
+    ): Promise<UserEntity> {
+
+        const currentUserId = context.req.user.id;
+        if (currentUserId !== userId) {
+            throw new ForbiddenException('You can only update your own profile');
+        }
+        const user = await this.userService.findOneById(userId);
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+
+        const isEmailChanged = updateData.identity && updateData.identity !== user.identity;
+        Object.assign(user, updateData);
+        const updatedUser = await this.userService.save(user);
+        if (isEmailChanged) {
+            const newToken = await this.authService.generateToken(updatedUser);
+            context.res.setHeader('Authorization', `Bearer ${newToken}`);
+        }
+
+        return updatedUser;
+    }
+
 
     @Query(() => PaginatedUser)
     @UseGuards(JwtAuthGuard)

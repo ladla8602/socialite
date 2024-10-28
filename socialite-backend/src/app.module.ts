@@ -60,6 +60,7 @@ const isProduction = process.env.NODE_ENV === 'production';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(__dirname, 'src/schema.gql'),
+
       debug: true,
       playground: true,
       sortSchema: true,

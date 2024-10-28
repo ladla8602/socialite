@@ -17,6 +17,7 @@ input CreatePostInput {
   content: String!
   content_type: Int!
   hashTags: String
+  visibility: String
 }
 
 input CreateUserInput {
@@ -99,6 +100,7 @@ type PostEntity {
   thumbnail: String
   updated_at: DateTime!
   user: UserEntity!
+  visibility: String!
 }
 
 type PostImageEntity {
@@ -136,6 +138,7 @@ type Query {
   hello: String!
   profile: UserEntity!
   suggestUsername(suggestUsernameInput: SuggestUsernameInput!): String!
+  updateUserProfile(data: UserUpdateDto!, userId: String!): UserEntity!
 }
 
 input SuggestUsernameInput {
@@ -186,4 +189,11 @@ type UserFollowEntity {
   followed: UserEntity!
   follower: UserEntity!
   id: ID!
+}
+
+input UserUpdateDto {
+  bio: String!
+  full_name: String!
+  identity: String
+  username: String!
 }

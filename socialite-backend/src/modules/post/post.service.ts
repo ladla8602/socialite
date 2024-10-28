@@ -12,6 +12,8 @@ import { PaginatedPost } from "./dto/post.response.dto";
 import { log } from "console";
 import { Repository } from "typeorm/repository/Repository";
 import { InjectRepository } from "@nestjs/typeorm";
+import { join } from "path/win32";
+import { createWriteStream } from "fs";
 
 @Injectable()
 export class PostService {

@@ -33,8 +33,12 @@ export class PostEntity {
     @Column({ type: 'varchar', length: 255 })
     content: string;
 
-    @Field({ nullable: true })
+    @Field()
     @Column({ type: 'varchar', length: 255, nullable: true })
+    visibility: string;
+
+    @Field({ nullable: true })
+    @Column({ type: 'varchar', length: 255, })
     thumbnail?: string;
 
     @Field({ nullable: true })
