@@ -7,9 +7,9 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 import { ForbiddenException, NotFoundException, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { PinoLogger } from 'nestjs-pino';
 import { UserFollowEntity } from './entities/user_follow.entity';
-import { PaginatedUser } from './dto/user.response.dto';
 import { PaginationArgs } from 'src/common/dto/pagination-args.dto';
-import { UserUpdateDto } from './dto/profile update.dto';
+import { UserUpdateDto } from './dto/request-user.dto';
+import { PaginatedUser } from './dto/response-user.dto';
 
 @Resolver(() => UserEntity)
 export class UserResolver {
@@ -79,7 +79,6 @@ export class UserResolver {
         @Args('id') userId: string,
         @Args('data') updateData: UserUpdateDto
     ): Promise<UserEntity> {
-
         const currentUserId = context.req.user.id;
         if (currentUserId !== userId) {
             throw new ForbiddenException('You can only update your own profile');
@@ -96,7 +95,6 @@ export class UserResolver {
             const newToken = await this.authService.generateToken(updatedUser);
             context.res.setHeader('Authorization', `Bearer ${newToken}`);
         }
-
         return updatedUser;
     }
 

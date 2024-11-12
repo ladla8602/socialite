@@ -32,7 +32,7 @@ export class UploadController {
             if (ALLOWED_IMAGE_MIME_TYPES.includes(file.mimetype)) {
                 callback(null, true);
             } else {
-                (req as any).fileValidationError = 'Invalid file type. Only JPEG, PNG, and GIF are allowed.';
+                (req as any).fileValidationError = 'Invalid file type. Only JPEG, JPG, PNG, and GIF are allowed.';
                 callback(null, false);
             }
         },
@@ -66,6 +66,7 @@ export class UploadController {
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(FilesInterceptor('imageFiles', 5, { // Adjust field name and file limit as needed
         fileFilter: (req: Request, file: Express.Multer.File, callback: multer.FileFilterCallback) => {
+            console.log(file.mimetype)
             if (ALLOWED_IMAGE_MIME_TYPES.includes(file.mimetype)) {
                 callback(null, true);
             } else {
@@ -77,6 +78,7 @@ export class UploadController {
             fileSize: MAX_IMAGE_SIZE,
         },
     }))
+
     async uploadPostImages(
         @UploadedFiles() files: Express.Multer.File[],
         @Body('postId') postId: string,
