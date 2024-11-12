@@ -1,6 +1,5 @@
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { PostEntity } from './entities/post.entity';
-import { CreateCommentInput, CreatePostInput } from './dto/create-post.input';
 import { PinoLogger } from 'nestjs-pino';
 import { PostService } from './post.service';
 import { UseGuards } from '@nestjs/common';
@@ -8,9 +7,10 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 import { PostCommentEntity } from './entities/post_comment.entity';
 
 import { PaginationArgs } from 'src/common/dto/pagination-args.dto';
-import { PaginatedPost } from './dto/post.response.dto';
 import { PostRepository } from './post.repository';
 import { PostLikeEntity } from './entities/post_like.entity';
+import { CreatePostInput, CreateCommentInput } from './dto/request-post.dto';
+import { PaginatedPost } from './dto/response-post.dto';
 
 @Resolver(() => PostEntity)
 export class PostResolver {

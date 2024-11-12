@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { CreateCommentInput, CreatePostInput } from "./dto/create-post.input";
 import { PostEntity } from "./entities/post.entity";
 import { UserRepository } from "../user/user.repository";
 import { PostMessage } from "./constants/post.messages";
@@ -8,12 +7,13 @@ import { TagEntity } from "./entities/tag.entity";
 import { PostTagEntity } from "./entities/post_tag.entity";
 import { PostImageEntity } from "./entities/post_image.entity";
 import { PostCommentEntity } from "./entities/post_comment.entity";
-import { PaginatedPost } from "./dto/post.response.dto";
 import { log } from "console";
 import { Repository } from "typeorm/repository/Repository";
 import { InjectRepository } from "@nestjs/typeorm";
 import { join } from "path/win32";
 import { createWriteStream } from "fs";
+import { CreatePostInput, CreateCommentInput } from "./dto/request-post.dto";
+import { PaginatedPost } from "./dto/response-post.dto";
 
 @Injectable()
 export class PostService {

@@ -4,9 +4,9 @@ import { CreateUserInput } from '../auth/dto/create-user.input';
 import { UserRepository } from './user.repository';
 import { UserMessage } from './constants/user.message';
 import { UserFollowEntity } from './entities/user_follow.entity';
-import { PaginatedUser } from './dto/user.response.dto';
 import { Admin, DeepPartial } from 'typeorm';
 import { use } from 'passport';
+import { PaginatedUser } from './dto/response-user.dto';
 
 @Injectable()
 export class UserService {

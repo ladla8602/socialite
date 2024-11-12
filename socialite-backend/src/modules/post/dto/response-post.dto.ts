@@ -4,10 +4,10 @@ import { PageInfo } from "src/common/dto/pagination.dto";
 
 @ObjectType()
 export class PaginatedPost {
-    @Field(() => [PostEntity])
-    edges: PostEntity[];
+  @Field(() => [PostEntity])
+  edges: PostEntity[];
 
-    @Field(() => PageInfo)
-    pageInfo: PageInfo;
+  @Field(() => PageInfo)
+  pageInfo: PageInfo;
 
 }

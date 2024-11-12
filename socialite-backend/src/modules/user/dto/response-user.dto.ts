@@ -4,9 +4,9 @@ import { UserEntity } from "../entities/user.entity";
 
 @ObjectType()
 export class PaginatedUser {
-    @Field(() => [UserEntity])
-    edges: UserEntity[];
+  @Field(() => [UserEntity])
+  edges: UserEntity[];
 
-    @Field(() => PageInfo)
-    pageInfo: PageInfo;
+  @Field(() => PageInfo)
+  pageInfo: PageInfo;
 }

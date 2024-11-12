@@ -33,6 +33,10 @@ export class PostEntity {
     @Column({ type: 'varchar', length: 255 })
     content: string;
 
+    @Field(() => Boolean)
+    @Column({ type: 'boolean', default: false })
+    is_processing?: boolean;
+
     @Field()
     @Column({ type: 'varchar', length: 255, nullable: true })
     visibility: string;

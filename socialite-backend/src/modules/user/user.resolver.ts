@@ -7,9 +7,9 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 import { ForbiddenException, NotFoundException, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { PinoLogger } from 'nestjs-pino';
 import { UserFollowEntity } from './entities/user_follow.entity';
-import { PaginatedUser } from './dto/user.response.dto';
 import { PaginationArgs } from 'src/common/dto/pagination-args.dto';
-import { UserUpdateDto } from './dto/profile update.dto';
+import { UserUpdateDto } from './dto/request-user.dto';
+import { PaginatedUser } from './dto/response-user.dto';
 
 @Resolver(() => UserEntity)
 export class UserResolver {
