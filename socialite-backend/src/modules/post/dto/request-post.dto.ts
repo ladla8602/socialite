@@ -1,4 +1,5 @@
 import { InputType, Field, ObjectType, Int } from '@nestjs/graphql';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 @InputType()
 export class CreatePostInput {
@@ -26,4 +27,16 @@ export class CreateCommentInput {
 
   @Field()
   postId: string;
+}
+
+@InputType()
+export class SuggestPostContentInput {
+  @Field()
+  @IsString()
+  @IsNotEmpty({ message: 'Content can\'t be empty' })
+  content: string;
+
+  @Field()
+  @IsString()
+  tone: string;
 }

@@ -13,6 +13,7 @@ import { PostLikeEntity } from './entities/post_like.entity';
 import { TagEntity } from './entities/tag.entity';
 import { PostVideoEntity } from './entities/post_video.entity';
 import { PostImageEntity } from './entities/post_image.entity';
+import { OpenAiService } from 'src/common/services/openai.service';
 
 @Module({
     imports: [
@@ -28,7 +29,7 @@ import { PostImageEntity } from './entities/post_image.entity';
         UserModule,
     ],
     controllers: [PostController],
-    providers: [PostService, PostRepository, PostResolver],
+    providers: [PostService, PostRepository, PostResolver, OpenAiService],
     exports: [PostService, PostRepository],
 })
 export class PostModule { }

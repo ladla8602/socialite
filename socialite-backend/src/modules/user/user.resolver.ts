@@ -79,7 +79,6 @@ export class UserResolver {
         @Args('userId') userId: string,
         @Args('data') updateData: UserUpdateDto
     ): Promise<UserEntity> {
-
         const currentUserId = context.req.user.id;
         if (currentUserId !== userId) {
             throw new ForbiddenException('You can only update your own profile');
@@ -96,7 +95,6 @@ export class UserResolver {
             const newToken = await this.authService.generateToken(updatedUser);
             context.res.setHeader('Authorization', `Bearer ${newToken}`);
         }
-
         return updatedUser;
     }
 

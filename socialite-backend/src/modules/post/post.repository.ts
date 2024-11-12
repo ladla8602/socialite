@@ -161,16 +161,13 @@ export class PostRepository extends BaseRepository<PostEntity> {
         return await this.commentRepository.save(comment);
     }
 
-
-
     async likePost(postId: string, userId: string): Promise<PostLikeEntity> {
         const newLike = this.postLikeRepository.create({ post: { id: postId }, user: { id: userId } });
         return await this.postLikeRepository.save(newLike);
     }
 
-
     async unlikePost(postId: string, userId: string): Promise<PostLikeEntity> {
-        const existingLike = await this.findLikeByPostAndUser(postId, userId);
+        const existingLike = await this.postLikeByUser(postId, userId);
         if (existingLike) {
             await this.postLikeRepository.delete(existingLike.id);
             return existingLike;
@@ -178,11 +175,7 @@ export class PostRepository extends BaseRepository<PostEntity> {
         throw new Error('Like not found');
     }
 
-
-    async findLikeByPostAndUser(postId: string, userId: string): Promise<PostLikeEntity | null> {
+    async postLikeByUser(postId: string, userId: string): Promise<PostLikeEntity | null> {
         return await this.postLikeRepository.findOne({ where: { post: { id: postId }, user: { id: userId } } });
     }
-
-
-
 }
