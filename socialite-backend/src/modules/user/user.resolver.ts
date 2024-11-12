@@ -76,7 +76,7 @@ export class UserResolver {
     @UseGuards(JwtAuthGuard)
     async updateUserProfile(
         @Context() context: any,
-        @Args('userId') userId: string,
+        @Args('id') userId: string,
         @Args('data') updateData: UserUpdateDto
     ): Promise<UserEntity> {
 
