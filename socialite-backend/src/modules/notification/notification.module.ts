@@ -1,6 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import * as admin from 'firebase-admin';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { NotificationService } from './notification.service';
 import { BullModule, InjectQueue, getQueueToken } from '@nestjs/bull';
 import { PushNotificationProcessor } from './notification.processor';
