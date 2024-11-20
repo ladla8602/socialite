@@ -17,6 +17,7 @@ input CreatePostInput {
   content: String!
   content_type: Int!
   hashTags: String
+  is_processing: Boolean
   visibility: String
 }
 
@@ -93,6 +94,7 @@ type PostEntity {
   deleted_at: DateTime
   id: ID!
   is_active: Boolean!
+  is_processing: Boolean!
   likesCount: Int!
   postImages: [PostImageEntity!]
   postVideo: PostVideoEntity
@@ -137,8 +139,14 @@ type Query {
   getUserPosts(after: String, first: Int! = 10): PaginatedPost!
   hello: String!
   profile: UserEntity!
+  suggestPostByAI(suggestPostContentInput: SuggestPostContentInput!): [String!]!
   suggestUsername(suggestUsernameInput: SuggestUsernameInput!): String!
-  updateUserProfile(data: UserUpdateDto!, userId: String!): UserEntity!
+  updateUserProfile(data: UserUpdateDto!, id: String!): UserEntity!
+}
+
+input SuggestPostContentInput {
+  content: String!
+  tone: String!
 }
 
 input SuggestUsernameInput {
@@ -194,6 +202,5 @@ type UserFollowEntity {
 input UserUpdateDto {
   bio: String!
   full_name: String!
-  identity: String
   username: String!
 }

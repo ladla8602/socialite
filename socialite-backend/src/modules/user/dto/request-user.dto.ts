@@ -11,9 +11,6 @@ export class UserUpdateDto {
   @Field()
   username: string;
 
-  @Field({ nullable: true })
-  identity?: string;
-
   @Field()
   bio: string;
 }

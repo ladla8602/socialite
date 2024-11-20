@@ -87,14 +87,9 @@ export class UserResolver {
         if (!user) {
             throw new NotFoundException('User not found');
         }
-
-        const isEmailChanged = updateData.identity && updateData.identity !== user.identity;
         Object.assign(user, updateData);
         const updatedUser = await this.userService.save(user);
-        if (isEmailChanged) {
-            const newToken = await this.authService.generateToken(updatedUser);
-            context.res.setHeader('Authorization', `Bearer ${newToken}`);
-        }
+
         return updatedUser;
     }
 
