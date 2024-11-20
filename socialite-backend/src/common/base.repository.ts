@@ -12,9 +12,10 @@ export class BaseRepository<Entity> {
         return await this.repository.save(entity);
     }
 
-    async findOne(id: string): Promise<Entity | null> {
+    async findOne(id: string, relations?: string[]): Promise<Entity | null> {
         return await this.repository.findOne({
             where: { id } as unknown as FindOptionsWhere<Entity>,
+            relations: relations
         });
     }
 

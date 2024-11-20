@@ -17,6 +17,7 @@ input CreatePostInput {
   content: String!
   content_type: Int!
   hashTags: String
+  is_processing: Boolean
   visibility: String
 }
 
@@ -55,7 +56,7 @@ type Mutation {
   createPost(createPostInput: CreatePostInput!): PostEntity!
   createUser(createUserInput: CreateUserInput!): LoginResponse!
   follow(followingId: String!): UserFollowEntity!
-  googleLogin(googleToken: String!): LoginResponse
+  googleLogin(deviceToken: String!, googleToken: String!): LoginResponse
   likePost(postId: String!): PostLikeEntity!
   login(loginInput: LoginInput!): LoginResponse!
   refreshToken(refreshToken: String!): LoginResponse!
@@ -93,6 +94,7 @@ type PostEntity {
   deleted_at: DateTime
   id: ID!
   is_active: Boolean!
+  is_processing: Boolean!
   likesCount: Int!
   postImages: [PostImageEntity!]
   postVideo: PostVideoEntity
@@ -137,8 +139,14 @@ type Query {
   getUserPosts(after: String, first: Int! = 10): PaginatedPost!
   hello: String!
   profile: UserEntity!
+  suggestPostByAI(suggestPostContentInput: SuggestPostContentInput!): [String!]!
   suggestUsername(suggestUsernameInput: SuggestUsernameInput!): String!
   updateUserProfile(data: UserUpdateDto!, userId: String!): UserEntity!
+}
+
+input SuggestPostContentInput {
+  content: String!
+  tone: String!
 }
 
 input SuggestUsernameInput {

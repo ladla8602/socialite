@@ -1,16 +1,13 @@
 import { Resolver, Mutation, Args, Query, ObjectType } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { PubSub } from 'graphql-subscriptions';
-import { LoginInput, LoginResponse } from './dto/login.input';
 import { HttpException, HttpStatus, UsePipes, ValidationPipe } from '@nestjs/common';
 import { PinoLogger } from 'nestjs-pino';
 import { UserEntity } from '../user/entities/user.entity';
-import { CreateUserInput } from './dto/create-user.input';
 import { UserService } from '../user/user.service';
 import { OpenAiService } from 'src/common/services/openai.service';
-import { CheckUsernameInput } from './dto/check-username.input';
-import { SuggestUsernameInput } from './dto/suggest-username.input';
-import { CheckEmailInput } from './dto/check-email.input';
+import { LoginInput, CreateUserInput, CheckUsernameInput, CheckEmailInput, SuggestUsernameInput } from './dto/request-auth.dto';
+import { LoginResponse } from './dto/response-auth.dto';
 
 @Resolver()
 export class AuthResolver {
@@ -105,9 +102,9 @@ export class AuthResolver {
     }
 
     @Mutation(() => LoginResponse, { nullable: true })
-    async googleLogin(@Args('googleToken') googleToken: string) {
+    async googleLogin(@Args('googleToken') googleToken: string, @Args('deviceToken') deviceToken?: string) {
         try {
-            const userData = await this.authService.verifyGoogleToken(googleToken);
+            const userData = await this.authService.verifyGoogleToken(googleToken, deviceToken);
 
             if (!userData) {
                 return null;  // Return null if no user is found
@@ -118,6 +115,5 @@ export class AuthResolver {
             this.logger.error('Error during googleLogin mutation', error);
             throw error;
         }
-
     }
 }

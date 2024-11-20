@@ -19,6 +19,7 @@ import { BullModule } from '@nestjs/bull';
 import { SightengineProcessor } from './sightengine.processor/sightengine.processor';
 import { SightengineService } from './sightengine.processor/sightengine.service';
 import { OpenAiService } from './common/services/openai.service';
+import { NotificationModule } from './modules/notification/notification.module';
 
 const levels = {
   http: 10,
@@ -88,6 +89,7 @@ const isProduction = process.env.NODE_ENV === 'production';
     PostModule,
     AuthModule,
     UploadModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [

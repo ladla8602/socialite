@@ -2,11 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { UserService } from '../user/user.service';
-import { LoginInput, LoginResponse } from './dto/login.input';
 import { UserEntity } from '../user/entities/user.entity';
 import { PinoLogger } from 'nestjs-pino';
 import { AuthMessage } from './constants/auth.message';
 import { OAuth2Client } from 'google-auth-library';
+import { LoginInput } from './dto/request-auth.dto';
+import { LoginResponse } from './dto/response-auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -26,6 +27,9 @@ export class AuthService {
                 throw new Error(AuthMessage.ACCOUNT_BLOCKED);
             }
             if (user && await bcrypt.compare(loginInput.password, user.password)) {
+                if (loginInput.device_token) {
+                    await this.userService.updateDeviceToken(user.id, loginInput.device_token);
+                }
                 return user;
             }
 
@@ -84,7 +88,7 @@ export class AuthService {
         }
     }
 
-    async validateUserForGoogleLogin(googleId: string, email: string): Promise<LoginResponse> {
+    async validateUserForGoogleLogin(googleId: string, email: string, deviceToken?: string): Promise<LoginResponse> {
         let user = await this.userService.findByGoogleId(googleId);
 
         if (!user) {
@@ -94,11 +98,14 @@ export class AuthService {
             }
         }
 
+        user.device_token = deviceToken;
+        await user.save();
+
         const result = await this.generateToken(user);
         return result;
     }
 
-    async verifyGoogleToken(token: string) {
+    async verifyGoogleToken(token: string, deviceToken?: string) {
         const ticket = await this.client.verifyIdToken({
             idToken: token,
             audience: process.env.GOOGLE_CLIENT_ID,
@@ -106,6 +113,6 @@ export class AuthService {
         const payload = ticket.getPayload();
         const googleId = payload.sub;
         const email = payload.email;
-        return this.validateUserForGoogleLogin(googleId, email);
+        return this.validateUserForGoogleLogin(googleId, email, deviceToken);
     }
 }
