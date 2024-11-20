@@ -29,6 +29,9 @@
   "dependencies": {
     "@apollo/server": "^4.11.0",
     "@aws-sdk/client-s3": "^3.645.0",
+    "@bull-board/api": "^6.5.2",
+    "@bull-board/express": "^6.5.2",
+    "@bull-board/ui": "^6.5.2",
     "@nestjs/apollo": "^12.2.1",
     "@nestjs/bull": "^10.2.1",
     "@nestjs/cache-manager": "^2.2.2",
@@ -48,6 +51,7 @@
     "cache-manager-ioredis": "^2.1.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "firebase-admin": "^13.0.0",
     "google-auth-library": "^9.14.1",
     "graphql": "^16.9.0",
     "graphql-subscriptions": "^2.0.0",

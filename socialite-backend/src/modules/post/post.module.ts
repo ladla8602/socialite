@@ -14,6 +14,8 @@ import { TagEntity } from './entities/tag.entity';
 import { PostVideoEntity } from './entities/post_video.entity';
 import { PostImageEntity } from './entities/post_image.entity';
 import { OpenAiService } from 'src/common/services/openai.service';
+import { NotificationService } from '../notification/notification.service';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
     imports: [
@@ -27,6 +29,7 @@ import { OpenAiService } from 'src/common/services/openai.service';
             PostImageEntity,
         ]),
         UserModule,
+        NotificationModule,
     ],
     controllers: [PostController],
     providers: [PostService, PostRepository, PostResolver, OpenAiService],

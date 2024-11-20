@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { UserEntity } from './entities/user.entity';
-import { CreateUserInput } from '../auth/dto/create-user.input';
 import { UserRepository } from './user.repository';
 import { UserMessage } from './constants/user.message';
 import { UserFollowEntity } from './entities/user_follow.entity';
 import { Admin, DeepPartial } from 'typeorm';
 import { use } from 'passport';
 import { PaginatedUser } from './dto/response-user.dto';
+import { CreateUserInput } from '../auth/dto/request-auth.dto';
 
 @Injectable()
 export class UserService {
@@ -38,6 +38,16 @@ export class UserService {
     }
     async save(user: UserEntity): Promise<UserEntity> {
         return await this.userRepository.save(user);
+    }
+
+    async updateDeviceToken(id: string, deviceToken: string): Promise<UserEntity> {
+        try {
+            const user = await this.userRepository.findOne(id);
+            user.device_token = deviceToken;
+            return await this.userRepository.save(user);
+        } catch (error: unknown) {
+            throw null;
+        }
     }
     async findOneByUsername(username: string): Promise<Boolean> {
         try {

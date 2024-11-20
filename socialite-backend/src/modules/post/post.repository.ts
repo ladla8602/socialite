@@ -161,8 +161,8 @@ export class PostRepository extends BaseRepository<PostEntity> {
         return await this.commentRepository.save(comment);
     }
 
-    async likePost(postId: string, userId: string): Promise<PostLikeEntity> {
-        const newLike = this.postLikeRepository.create({ post: { id: postId }, user: { id: userId } });
+    async likePost(post: PostEntity, userId: string): Promise<PostLikeEntity> {
+        const newLike = this.postLikeRepository.create({ post: post, user: { id: userId } });
         return await this.postLikeRepository.save(newLike);
     }
 

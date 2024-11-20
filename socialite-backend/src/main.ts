@@ -7,6 +7,7 @@ import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './utils/http-exception.filter';
 import { JwtAuthGuard } from './modules/auth/jwt.guard';
 import * as passport from 'passport';
+import { ExpressAdapter } from '@bull-board/express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true, bodyParser: true });

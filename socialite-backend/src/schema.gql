@@ -56,7 +56,7 @@ type Mutation {
   createPost(createPostInput: CreatePostInput!): PostEntity!
   createUser(createUserInput: CreateUserInput!): LoginResponse!
   follow(followingId: String!): UserFollowEntity!
-  googleLogin(googleToken: String!): LoginResponse
+  googleLogin(deviceToken: String!, googleToken: String!): LoginResponse
   likePost(postId: String!): PostLikeEntity!
   login(loginInput: LoginInput!): LoginResponse!
   refreshToken(refreshToken: String!): LoginResponse!
@@ -142,6 +142,11 @@ type Query {
   suggestPostByAI(suggestPostContentInput: SuggestPostContentInput!): [String!]!
   suggestUsername(suggestUsernameInput: SuggestUsernameInput!): String!
   updateUserProfile(data: UserUpdateDto!, id: String!): UserEntity!
+}
+
+input SuggestPostContentInput {
+  content: String!
+  tone: String!
 }
 
 input SuggestPostContentInput {

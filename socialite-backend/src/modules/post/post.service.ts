@@ -15,6 +15,7 @@ import { createWriteStream } from "fs";
 import { CreatePostInput, CreateCommentInput } from "./dto/request-post.dto";
 import { PaginatedPost } from "./dto/response-post.dto";
 import { PostLikeEntity } from "./entities/post_like.entity";
+import { NotificationService } from './../notification/notification.service';
 
 @Injectable()
 export class PostService {
@@ -23,6 +24,7 @@ export class PostService {
         private readonly postRepository: PostRepository,
         @InjectRepository(PostCommentEntity)
         private readonly commentRepository: Repository<PostCommentEntity>,
+        private readonly notificationService: NotificationService,
 
     ) { }
 
@@ -103,8 +105,6 @@ export class PostService {
 
     }
 
-
-
     async savePostImage(postId: string, image_url: string, status: boolean) {
         const post = await this.postRepository.findOne(postId);
         if (post) {
@@ -119,6 +119,7 @@ export class PostService {
             this.postRepository.insetPostImage(postImage);
         }
     }
+
     async addPostComment(createCommentInput: CreateCommentInput, userId: string): Promise<PostCommentEntity> {
         try {
             // Find the user who is adding the comment
@@ -172,6 +173,18 @@ export class PostService {
     }
 
     async likePost(postId: string, userId: string): Promise<PostLikeEntity | null> {
-        return await this.postRepository.likePost(postId, userId);
+        try {
+            const post = await this.postRepository.findOne(postId, ['user']);
+            const user = await this.userRepository.findOne(userId);
+            if (!post) {
+                throw new Error(PostMessage.POST_NOT_FOUND);
+            }
+            await this.notificationService.sendPostLikeNotification(post, user);
+            return await this.postRepository.likePost(post, userId);
+        } catch (error: unknown) {
+            console.log(error)
+            throw error;
+        }
+
     }
 }

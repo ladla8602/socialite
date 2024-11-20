@@ -1,7 +1,7 @@
 import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { UserEntity } from './entities/user.entity';
 import { UserService } from './user.service';
-import { CreateUserInput } from '../auth/dto/create-user.input';
+import { CreateUserInput } from '../auth/dto/request-auth.dto';
 import { PubSub } from 'graphql-subscriptions';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { ForbiddenException, NotFoundException, UnauthorizedException, UseGuards } from '@nestjs/common';

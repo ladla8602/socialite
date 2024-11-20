@@ -1,7 +1,7 @@
 import { Int, PartialType } from "@nestjs/graphql";
 import { Field } from "@nestjs/graphql/dist/decorators/field.decorator";
 import { InputType } from "@nestjs/graphql/dist/decorators/input-type.decorator";
-import { CreateUserInput } from "src/modules/auth/dto/create-user.input";
+import { CreateUserInput } from "../../auth/dto/request-auth.dto";
 
 @InputType()
 export class UserUpdateDto {
