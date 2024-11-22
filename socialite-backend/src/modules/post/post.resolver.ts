@@ -25,7 +25,7 @@ export class PostResolver {
     @Mutation(() => PostEntity)
     @UseGuards(JwtAuthGuard)
     async createPost(
-        @Args('createPostInput') createPostInput: CreatePostInput,
+        @Args('createPostInput',) createPostInput: CreatePostInput,
         @Context() context: any
     ) {
         try {
