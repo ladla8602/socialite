@@ -47,7 +47,7 @@ export class OpenAiService {
                     model: 'gpt-4o-mini',
                     messages: [
                         {
-                            role: 'user', content: `Generate 2 post content with same meaning and same tone: ${content}. Make sure is should be ${tone} tone and only give resonse as string using backslash commas to separate each variant. Make sure to keep tags and hastags intact if any`
+                            role: 'user', content: `Generate 3 post content with same meaning and same tone: ${content}. Make sure is should be ${tone} tone and only give resonse as string using backslash commas(\,) to separate each variant. Make sure to keep tags and hastags intact if any`
                         },
                     ],
                 },
