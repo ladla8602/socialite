@@ -136,6 +136,27 @@ export class UserRepository extends BaseRepository<UserEntity> {
 
         return users;
     }
+
+    async followerByUser(userId: string, first: number, after?: string): Promise<UserEntity[]> {
+        const whereCondition: any = {
+            following_users: { followed: { id: userId } }, // Filter by the userId in the follower relation
+            is_active: true, // Only get active users
+        };
+
+        if (after) {
+            whereCondition.id = MoreThan(after);
+        }
+
+        // Fetch followers
+        const users = await this.userRepository.find({
+            where: whereCondition,
+            take: first + 1, // Take one extra to check if there's more for pagination
+            relations: ['followers_users'], // Load the followers_users relation
+        });
+
+        return users;
+    }
+
     async save(user: UserEntity): Promise<UserEntity> {
         this.logger.info(`Saving user with id: ${user.id}`);
         return await this.userRepository.save(user);

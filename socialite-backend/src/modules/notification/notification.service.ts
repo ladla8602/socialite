@@ -45,6 +45,11 @@ export class NotificationService {
     });
   }
 
+  /**
+   * Sends a push notification to the author of a post when a new like is created
+   * @param post The post which was liked
+   * @param user The user who liked the post
+   */
   async sendPostLikeNotification(post: PostEntity, user: UserEntity) {
     const author = post.user;
     if (author && author.device_token && post.user.id !== user.id) {

@@ -89,6 +89,10 @@ export class UserService {
             const follower = await this.userRepository.findOne(followerId);
             const followed = await this.userRepository.findOne(followingId);
 
+            if (followerId == followingId) {
+                throw new Error(UserMessage.SELF_FOLLOW);
+            }
+
             if (!follower || !followed) {
                 throw new Error(UserMessage.USER_NOT_FOUND);
             }
@@ -158,6 +162,28 @@ export class UserService {
         try {
 
             let posts = await this.userRepository.followedByUser(userId, first, after);
+
+            const edges = posts.slice(0, first);
+            const hasNextPage = posts.length > first;
+
+            return {
+                edges,
+                pageInfo: {
+                    hasNextPage,
+                    hasPreviousPage: !!after,
+                    startCursor: edges.length ? edges[0].id : null,
+                    endCursor: edges.length ? edges[edges.length - 1].id : null,
+                },
+            };
+        } catch (error: unknown) {
+            throw error;
+        }
+    }
+
+    async followerByUser(userId: string, first: number, after?: string): Promise<PaginatedUser> {
+        try {
+
+            let posts = await this.userRepository.followerByUser(userId, first, after);
 
             const edges = posts.slice(0, first);
             const hasNextPage = posts.length > first;

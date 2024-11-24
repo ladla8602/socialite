@@ -110,4 +110,21 @@ export class UserResolver {
             throw error;
         }
     }
+
+    @Query(() => PaginatedUser)
+    @UseGuards(JwtAuthGuard)
+    async follower(
+        @Args() paginationArgs: PaginationArgs,
+        @Context() context: any,
+    ) {
+        const { first, after } = paginationArgs;
+        const userId = context.req.user.id;
+        try {
+            return this.userService.followerByUser(userId, first, after);
+        } catch (error) {
+            // Handle and log the error appropriately
+            this.logger.error('Error during followed query', error);
+            throw error;
+        }
+    }
 }

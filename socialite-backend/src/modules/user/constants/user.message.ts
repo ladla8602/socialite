@@ -5,5 +5,6 @@ export const enum UserMessage {
     USER_ALREADY_EXISTS = 'User already exists!',
     ALREADY_FOLLOWING = 'You are already following this person',
     NOT_FOLLOWING = 'You are not following this person',
-    UNFOLLOW_SUCCESS = 'You have successfully unfollow this person'
+    UNFOLLOW_SUCCESS = 'You have successfully unfollow this person',
+    SELF_FOLLOW = 'You cannot follow yourself'
 }
