@@ -9,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => ({
                 type: 'mysql',
+                connectorPackage: 'mysql2',
                 host: configService.get<string>('DATABASE_MASTER_HOST'),
                 port: +configService.get<number>('DATABASE_MASTER_PORT'),
                 username: configService.get<string>('DATABASE_MASTER_USERNAME'),
@@ -43,9 +44,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
                     migrationsDir: 'src/database/migrations',
                 },
                 logging: false,
-                extra: {
-                    trustServerCertificate: true,
-                },
             }),
         }),
     ],

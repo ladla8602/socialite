@@ -15,7 +15,7 @@ input CreateCommentInput {
 
 input CreatePostInput {
   content: String!
-  content_type: Float!
+  content_type: Int!
   hashTags: String
 }
 

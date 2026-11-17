@@ -38,15 +38,15 @@ export class PostEntity {
     thumbnail?: string;
 
     @Field({ nullable: true })
-    @DeleteDateColumn({ type: 'timestamp', nullable: true })
+    @DeleteDateColumn()
     deleted_at?: Date;
 
     @Field(() => Date)  // Field exposed in GraphQL
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @CreateDateColumn()
     created_at: Date;
 
     @Field(() => Date)  // Field exposed in GraphQL
-    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @UpdateDateColumn()
     updated_at: Date;
 
     @Field(() => [PostImageEntity], { nullable: true })

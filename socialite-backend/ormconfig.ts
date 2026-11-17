@@ -3,6 +3,7 @@ import { ENTITIES } from "./src/common/export.entities";
 export default {
     name: 'default',
     type: 'mysql',
+    connectorPackage: 'mysql2',
     host: 'localhost', // or your MySQL server host
     port: 3306,        // MySQL default port
     username: 'root',  // your MySQL username

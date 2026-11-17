@@ -43,8 +43,13 @@ export class UserRepository extends BaseRepository<UserEntity> {
 
             // this.logger.info(`Cache miss for identity: ${identity}. Fetching from database.`);
 
-            // Fetch from the database
-            let user = await this.userRepository.findOne({ where: { identity } });
+            // Fetch from the database (support email or username)
+            let user = await this.userRepository.findOne({
+                where: [
+                    { identity },
+                    { username: identity },
+                ],
+            });
 
             // if (user) {
             //     // Store the result in the cache with a TTL
@@ -54,8 +59,8 @@ export class UserRepository extends BaseRepository<UserEntity> {
             // }
 
             return user;
-        } catch (error) {
-            this.logger.error(`Error fetching user with identity: ${identity}`, error);
+        } catch (error: any) {
+            this.logger.error(`Error fetching user with identity: ${identity} - ${error?.message || error}`);
             return undefined;
         }
     }

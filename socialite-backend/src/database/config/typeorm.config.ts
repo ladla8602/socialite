@@ -12,8 +12,9 @@ ConfigModule.forRoot({
 
 const options = {
     type: process.env.DATABASE_TYPE,
+    connectorPackage: 'mysql2',
     host: process.env.DATABASE_MASTER_HOST || 'localhost',
-    port: process.env.DATABASE_MASTER_PORT || 5432,
+    port: Number(process.env.DATABASE_MASTER_PORT) || 3306,
     username: process.env.DATABASE_MASTER_USERNAME,
     password: process.env.DATABASE_MASTER_PASSWORD,
     database: process.env.DATABASE_NAME,

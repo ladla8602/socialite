@@ -2,9 +2,10 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
-import Auth from './modules/auth/Auth';
+import LoginContainer from './modules/auth/containers/LoginContainer/LoginContainer';
 import { ROUTES } from './modules/core/models/route';
 import { RootState } from './modules/core/store/store';
+import Dashboard from './modules/dashboard/Dashboard';
 
 import './index.css';
 import './style.css';
@@ -20,18 +21,19 @@ function App() {
 
   return (
     <Routes>
-      {/* Public routes */}
-      <Route path={`/*`} element={<Auth />} />
+      {/* Login route */}
+      <Route
+        path={ROUTES.LOGIN}
+        element={isAuthorized ? <Navigate to={ROUTES.DASHBOARD} replace /> : <LoginContainer />}
+      />
 
-      {/* Private routes */}
-      <Route path={`${ROUTES.USER}/*`} element={<PrivateRoute element={<></>} />} />
+      {/* Dashboard protected route */}
+      <Route path={ROUTES.DASHBOARD} element={<PrivateRoute element={<Dashboard />} />} />
 
-      {/* Redirect based on auth status */}
+      {/* Default / Fallback redirect */}
       <Route
         path='*'
-        element={
-          isAuthorized ? <Navigate to={`${ROUTES.DASHBOARD}`} replace /> : <Navigate to={ROUTES.LOGIN} replace />
-        }
+        element={isAuthorized ? <Navigate to={ROUTES.DASHBOARD} replace /> : <Navigate to={ROUTES.LOGIN} replace />}
       />
     </Routes>
   );

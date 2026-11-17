@@ -37,12 +37,14 @@ export const setupInterceptors = (axiosInstance: AxiosInstance): AxiosInstance =
     (response) => response,
     async (error: AxiosError) => {
       const originalRequest = error.config;
-      if (error.response?.status === 401) {
+      if (originalRequest && error.response?.status === 401) {
         if (isRefreshing) {
           // If a refresh is in progress, queue the request
           return new Promise((resolve) => {
             failedQueue.push((token: string) => {
-              originalRequest.headers['Authorization'] = `Bearer ${token}`;
+              if (originalRequest.headers) {
+                originalRequest.headers['Authorization'] = `Bearer ${token}`;
+              }
               resolve(axiosInstance(originalRequest));
             });
           });

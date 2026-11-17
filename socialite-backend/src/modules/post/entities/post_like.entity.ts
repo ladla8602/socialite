@@ -11,7 +11,7 @@ export class PostLikeEntity {
     id: string;
 
     @Field(() => Date)
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @CreateDateColumn()
     created_at: Date;
 
     @ManyToOne(() => PostEntity, post => post.likes)
