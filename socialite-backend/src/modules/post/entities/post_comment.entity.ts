@@ -15,7 +15,7 @@ export class PostCommentEntity {
     content: string;
 
     @Field(() => Date)
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @CreateDateColumn()
     created_at: Date;
 
     @ManyToOne(() => PostEntity, (post) => post.comments)

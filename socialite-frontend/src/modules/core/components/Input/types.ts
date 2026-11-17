@@ -10,6 +10,7 @@ export interface InputProps {
   value?: string;
   placeholder?: string;
   className?: string;
+  disabled?: boolean;
   onChange?: ((value: any) => void) | undefined;
   onClick?: (() => void) | undefined;
 }

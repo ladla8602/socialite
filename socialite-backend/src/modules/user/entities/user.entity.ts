@@ -101,15 +101,15 @@ export class UserEntity extends EntityRelationalHelper {
     longitude?: number;
 
     @Field({ nullable: true })
-    @DeleteDateColumn({ type: 'timestamp', nullable: true })
+    @DeleteDateColumn()
     deleted_at?: Date;
 
     @Field()
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @CreateDateColumn()
     created_at: Date;
 
     @Field()
-    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @UpdateDateColumn()
     updated_at: Date;
 
     @Field(() => [PostEntity], { nullable: true })

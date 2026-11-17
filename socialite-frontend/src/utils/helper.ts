@@ -1,5 +1,3 @@
-import { postRequest } from './axios/apiServiceUtils';
-
 export const labelObjects = (label: string) => {
   // Convert label to camelCase
   return label
@@ -82,7 +80,7 @@ export function formatAddress({ town, city, province }: AddressComponents): stri
   return components.length > 0 ? components.join(', ') : 'No Data';
 }
 
-export function convertWeblinkName(locationName) {
+export function convertWeblinkName(locationName: string) {
   return locationName
     .toLowerCase() // Convert to lowercase
     .replace(/\s+/g, '-'); // Replace spaces with '-'

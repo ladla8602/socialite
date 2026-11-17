@@ -20,9 +20,13 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: process.env.VITE_API_TARGET,
+        target: process.env.VITE_API_TARGET || 'http://localhost:5001',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+      '/graphql': {
+        target: process.env.VITE_API_TARGET || 'http://localhost:5001',
+        changeOrigin: true,
       },
     },
   },
@@ -30,9 +34,13 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: process.env.VITE_API_TARGET,
+        target: process.env.VITE_API_TARGET || 'http://localhost:5001',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+      '/graphql': {
+        target: process.env.VITE_API_TARGET || 'http://localhost:5001',
+        changeOrigin: true,
       },
     },
   },

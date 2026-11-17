@@ -1,50 +1,85 @@
-# React + TypeScript + Vite
+# Socialite Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Socialite Frontend is built with **React 18**, **TypeScript**, **Vite**, **Redux Toolkit**, **React Router v6**, and **Tabler UI**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Prerequisites
 
-## Expanding the ESLint configuration
+Ensure you have the following installed:
+- **Node.js**: `v18+` or `v20+` (compatible with `v20.17.0+` and `v22.x`)
+- **Package Manager**: `yarn` (`npm install -g yarn` or `corepack enable`)
+- **Socialite Backend**: Running on `http://localhost:5000` (or as configured in `.env`)
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+---
 
-- Configure the top-level `parserOptions` property like this:
+## 1. Environment Configuration
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+1. Create a `.env` file in the `socialite-frontend` directory by copying the example:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Review the environment variables:
+   ```env
+   # Backend API Proxy Target
+   VITE_API_TARGET=http://localhost:5000
+
+   # Application Base URL
+   VITE_URL_GENERATION=http://localhost:3000
+
+   # External / Social Links (Optional)
+   VITE_URL_FACEBOOK=https://facebook.com
+   VITE_URL_INSTAGRAM=https://instagram.com
+   VITE_URL_OTHER=http://localhost:3000
+   ```
+
+> **Note**: Vite's dev server proxies any `/api/*` requests to the target configured in `VITE_API_TARGET`.
+
+---
+
+## 2. Installation
+
+Install all dependencies using Yarn:
+
+```bash
+yarn install
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+---
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+## 3. Running the Application
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+### Development Server
+Start the local development server with HMR (Hot Module Replacement):
+
+```bash
+yarn dev
 ```
+
+The frontend application will be available at:
+- **Local URL**: [http://localhost:3000](http://localhost:3000)
+
+### Production Build
+To create an optimized production build:
+
+```bash
+yarn build
+```
+
+To locally preview the production build:
+
+```bash
+yarn preview
+```
+
+---
+
+## 4. Available Scripts
+
+| Command | Description |
+|---|---|
+| `yarn dev` | Runs the Vite development server on port 3000 |
+| `yarn build` | Runs TypeScript type checking and builds the production bundle in `dist/` |
+| `yarn preview` | Serves the production build locally for verification |
+| `yarn lint` | Lints the project files with ESLint |

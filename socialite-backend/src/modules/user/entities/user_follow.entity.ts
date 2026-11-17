@@ -18,6 +18,6 @@ export class UserFollowEntity {
     followed: UserEntity;
 
     @Field()
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @CreateDateColumn()
     created_at: Date;
 }
